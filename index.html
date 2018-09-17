@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Map Test</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />    
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js"></script> 
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(event) {
+            console.log("DOMContentLoaded");
+            var script = document.createElement("script"); 
+            script.src = "map.js?v=" + Math.floor(Math.random() * Math.floor(10000));
+            document.body.appendChild(script);              
+        });    
+    </script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css" rel="stylesheet" /> 
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+        }                
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        #info {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 10px 10px auto auto;    /* top right bottom left */
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 12px;
+            text-align: center;
+            color: #222;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <pre id="info"></pre>
+</body>
+</html>
