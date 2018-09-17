@@ -1,0 +1,25 @@
+{
+  "name": "path-tracker",
+  "version": "1.0.0",
+  "description": "Decentralized map prototype",
+  "main": "index.html",
+  "dependencies": {
+    "ipfs": "^0.32.0",
+    "nodejs": "0.0.0",
+    "orbit-db": "^0.19.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianhouse/path-tracker.git"
+  },
+  "author": "Brian House",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brianhouse/path-tracker/issues"
+  },
+  "homepage": "https://github.com/brianhouse/path-tracker#readme"
+}
