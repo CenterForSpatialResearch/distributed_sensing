@@ -9,15 +9,24 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js"></script>
     <script src="https://api.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js"></script> 
-    <script type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function(event) {
-            console.log("DOMContentLoaded");
-            var script = document.createElement("script"); 
-            script.src = "map.js?v=" + Math.floor(Math.random() * Math.floor(10000));
-            document.body.appendChild(script);              
-        });    
+    <script src="bundle.js"></script>     
+    <!-- <script src="hypertest.js"></script>      -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>     -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/orbit-db@0.19.3/src/OrbitDB.min.js"></script>     -->
+<!--     <script type="text/javascript">
+        let addNoCacheScript = function (name) {
+            let script = document.createElement('script')
+            script.src = name + '?v=' + Math.floor(Math.random() * Math.floor(10000))
+            document.body.appendChild(script)           
+        }
+        document.addEventListener('DOMContentLoaded', function(event) {
+            console.log('DOMContentLoaded')
+            // addNoCacheScript("map.js")            
+            // addNoCacheScript("ipfs.js")
+            addNoCacheScript('hypertest.js')
+        })    
     </script>
-    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css" rel="stylesheet" /> 
+ -->    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css" rel="stylesheet" /> 
     <style>
         body, html {
             margin: 0;
@@ -45,6 +54,7 @@
     </style>
 </head>
 <body>
+    HELLO WORLD
     <div id="map"></div>
     <pre id="info"></pre>
 </body>

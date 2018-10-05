@@ -1,6 +1,5 @@
-
-var map = null;
-var position = null;
+let map = null;
+let position = null;
 
 if (!mapboxgl.supported()) alert("Your browser does not support Mapbox GL");
 mapboxgl.accessToken = "pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ";
@@ -39,16 +38,16 @@ map.on('click', function(e) {
 
 activate = function(point) {
     console.log(point);
-    var lng = point.geometry.coordinates[0];
-    var lat = point.geometry.coordinates[1];
+    let lng = point.geometry.coordinates[0];
+    let lat = point.geometry.coordinates[1];
     console.log("point: " + lng + "," + lat);    
     document.getElementById('info').innerHTML = lng.toFixed(5) + "," + lat.toFixed(5);            
-}
+};
 
 getDistance = function(point_from, point_to) {
-    var distance = turf.distance(point_from, point_to, 'miles') * 5280;
+    let distance = turf.distance(point_from, point_to, 'miles') * 5280;
     return distance;
-}
+};
 
 setInterval(function() {
     console.log("called");
