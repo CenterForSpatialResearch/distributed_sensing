@@ -1,4 +1,4 @@
 # path-tracker
 
-Decentralized map prototype
+Distributed sensing prototype
 

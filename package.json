@@ -4,7 +4,7 @@
   "description": "Decentralized map prototype",
   "main": "index.html",
   "dependencies": {
-    "hypercore": "^6.19.2",
+    "hypercore": "^6.25.0",
     "hyperdiscovery": "^8.0.0",
     "ipfs": "^0.32.3",
     "nodejs": "0.0.0",
