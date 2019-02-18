@@ -29,15 +29,18 @@ feed.on('ready', function() {
 
     })
 
-
-    // feed.append('hello')
-    // feed.append('world')
-    // setInterval(function() {
-    //   feed.head(console.log)
-    // }, 1000)
+    setInterval(function() {
+        let datum = + new Date()
+        feed.append(datum)
+        console.log(datum)
+    }, 1000)
 
 })
 
 feed.on('error', function(err) {
     console.log(err)
 })
+
+
+
+// prevent prior accessing prior elements in the feed?
