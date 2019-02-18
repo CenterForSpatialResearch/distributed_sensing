@@ -1,14 +1,17 @@
 'use strict'
 
+console.log('hello world')
+
 let ram = require('random-access-memory')
 let hypercore = require('hypercore')
 let hyperdiscovery = require('hyperdiscovery')
 
-// let feed = hypercore(ram, {valueEncoding: 'json'})   // use ram
-let feed = hypercore('./data', {valueEncoding: 'json'}) // use disk 
+const PUBLIC_KEY = process.argv[2]
+
+let feed = hypercore(ram, PUBLIC_KEY, {valueEncoding: 'json'})
 let swarm
 
-feed.on('ready', function() {    
+feed.on('ready', function() {
 
     console.log('PUBLIC_KEY\t', feed.key.toString('hex'))
     console.log('DISCOVERY_KEY\t', feed.discoveryKey.toString('hex'))
@@ -17,9 +20,9 @@ feed.on('ready', function() {
     swarm = hyperdiscovery(feed)
     console.log('SWARM INFO', '\nDNS', swarm._options.dns, '\nDHT', swarm._options.dht, '\nPORT', swarm._options.port, '\n')
     console.log('Connecting to swarm as ' + swarm.id.toString('hex'))
-    console.log()
+    console.log()    
 
-    swarm.on('connection', function (connection, peer) {
+    swarm.on('connection', function(connection, peer) {
 
         console.log('Connected\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')
         
@@ -29,15 +32,12 @@ feed.on('ready', function() {
 
     })
 
-
-    // feed.append('hello')
-    // feed.append('world')
-    // setInterval(function() {
-    //   feed.head(console.log)
-    // }, 1000)
-
 })
 
-feed.on('error', function(err) {
-    console.log(err)
-})
+// // create a readStream so that we can log all of the data we get from the peers we connect with
+// // 'start: 0' makes the stream start at the beginning of the log
+// // 'live: true' keeps the stream open after the last bit of data has been read, yielding more data as it comes in
+// var stream = feed.createReadStream({start: 0, live: true})
+// stream.on("data", function(data) {
+//     console.log("data", data)
+// })
