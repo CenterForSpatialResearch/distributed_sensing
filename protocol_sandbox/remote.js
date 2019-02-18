@@ -32,10 +32,7 @@ feed.on('ready', function() {
 
 })
 
-// create a readStream so that we can log all of the data we get from the peers we connect with
-// 'start: 0' makes the stream start at the beginning of the log
-// 'live: true' keeps the stream open after the last bit of data has been read, yielding more data as it comes in
-let stream = feed.createReadStream({start: 0, live: true})
-stream.on("data", function(data) {
-    console.log("data", data)
+let stream = feed.createReadStream({start: 0, live: true}) // start at index 0, and keep live to receive new info
+stream.on('data', function(data) {
+    console.log(data)
 })
