@@ -1,0 +1,23 @@
+{
+  "name": "distributed-sensing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "writer/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianhouse/distributed-sensing.git"
+  },
+  "author": "Center for Spatial Research",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brianhouse/distributed-sensing/issues"
+  },
+  "homepage": "https://github.com/brianhouse/distributed-sensing#readme",
+  "dependencies": {
+    "hypercore": "^6.25.0",
+    "hyperdiscovery": "^8.0.0"
+  }
+}
