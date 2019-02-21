@@ -7,6 +7,7 @@ let hyperdiscovery = require('hyperdiscovery')
 const PUBLIC_KEY = process.argv[2]
 
 let feed = hypercore(ram, PUBLIC_KEY, {valueEncoding: 'json'})
+// let feed = hypercore('./remote_data', PUBLIC_KEY, {valueEncoding: 'json'})
 let swarm
 
 feed.on('ready', function() {

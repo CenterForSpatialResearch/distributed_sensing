@@ -19,7 +19,7 @@ feed.on('ready', function() {
     console.log('Connecting to swarm as ' + swarm.id.toString('hex'))
     console.log()
 
-    swarm.on('connection', function (connection, peer) {
+    swarm.on('connection', function(connection, peer) {
 
         console.log('Connected\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')
         
