@@ -37,10 +37,10 @@ feed.on('ready', function() {
 
 })
 
+
 feed.on('error', function(err) {
     console.log(err)
 })
-
 
 
 // prevent prior accessing prior elements in the feed?

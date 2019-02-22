@@ -2,82 +2,73 @@
 
 'use strict'
 
-const http = require('http')
 const port = 5280
 
-const requestHandler = (request, response) => {
-    console.log(request)
+const http = require('http')
+const hypercore = require('hypercore')
+const hyperdiscovery = require('hyperdiscovery')
+
+const feed = hypercore('./data', {valueEncoding: 'json'}) // use disk 
+let swarm
+
+feed.on('ready', function() {    
+
+    console.log('DAT\tpublic_key\t' + feed.key.toString('hex'))
+    // console.log('DAT\tdiscovery_key\t', feed.discoveryKey.toString('hex'))
+    // console.log()
+
+    swarm = hyperdiscovery(feed)
+    // console.log('SWARM INFO', '\nDNS', swarm._options.dns, '\nDHT', swarm._options.dht, '\nPORT', swarm._options.port, '\n')
+    console.log('DAT\tconnecting as\t' + swarm.id.toString('hex'))
+
+    swarm.on('connection', function(connection, peer) {
+        console.log('DAT\tconnected to\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')    
+        connection.on('close', function() {
+            console.log('DAT\tdisconn from\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')
+        })
+    })
+
+})
+
+feed.on('error', function(err) {
+    console.log(err)
+})
+
+const requestHandler = (request, response) => {    
     if (request.method == 'POST') {
         let body = ''
         request.on('data', (data) => {
             body += data
         })
         request.on('end', () =>  {
-            console.log(body)
+            let obj
+            try {
+                obj = JSON.parse(body)
+                if (obj.t_utc == undefined) {
+                    obj.t_utc = new Date().getTime() / 1000
+                }
+            } catch(err) {
+                response.statusCode = 400
+                console.log('HTTP\terror: ' + err.message)
+                console.log(body)
+                response.end('HTTP\terror: ' + err.message + '\n')
+                return
+            }
+            console.log('HTTP\t' + request.connection.remoteAddress + '\t\t', obj)
+            feed.append(JSON.stringify(obj))
+            response.end('OK\n')
         })
-    }
-
-    response.end('Hello world')
+    }    
 }
 
 const server = http.createServer(requestHandler)
 
 server.listen(port, (err) => {
     if (err) {
-        return console.log('something bad happened', err)
+        return console.log('SERVICE\terror ' + err)
     }
-    console.log('Listening on port ' + port)
+    console.log('HTTP\tlistening on port ' + port)
 })
 
 
 // curl http://localhost:5280 --data "{'t_utc': 1234}"
-// echo "hi" > /dev/tcp/localhost/5280
-
-// const hypercore = require('hypercore')
-// const hyperdiscovery = require('hyperdiscovery')
-
-// const feed = hypercore('./data', {valueEncoding: 'json'}) // use disk 
-// let swarm
-
-// feed.on('ready', function() {    
-
-//     console.log('PUBLIC_KEY\t', feed.key.toString('hex'))
-//     console.log('DISCOVERY_KEY\t', feed.discoveryKey.toString('hex'))
-//     console.log()
-
-//     swarm = hyperdiscovery(feed)
-//     console.log('SWARM INFO', '\nDNS', swarm._options.dns, '\nDHT', swarm._options.dht, '\nPORT', swarm._options.port, '\n')
-//     console.log('Connecting to swarm as ' + swarm.id.toString('hex'))
-//     console.log()
-
-//     swarm.on('connection', function(connection, peer) {
-
-//         console.log('Connected\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')
-        
-//         connection.on('close', function() {
-//             console.log('Disconnected\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')
-//         })
-
-//     })
-
-//     setInterval(function() {
-//         let datum = + new Date()
-//         feed.append(datum)
-//         console.log(datum)
-//     }, 1000)
-
-// })
-
-// feed.on('error', function(err) {
-//     console.log(err)
-// })
-
-
-
-
-/*
-
-https://stackoverflow.com/questions/4681067/how-do-i-run-a-node-js-application-as-its-own-process/28542093#28542093
-
-
-*/
