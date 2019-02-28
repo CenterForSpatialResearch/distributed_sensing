@@ -71,4 +71,4 @@ server.listen(port, (err) => {
 })
 
 
-// curl http://localhost:5280 --data "{'t_utc': 1234}"
+// curl http://localhost:5280 --data '{"latitude": 1234, "longitude": 5678}'
