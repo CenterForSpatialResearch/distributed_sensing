@@ -1,44 +1,32 @@
-'use strict'
+const { app, BrowserWindow } = require('electron')
 
-let ram = require('random-access-memory')
-let hypercore = require('hypercore')
-let hyperdiscovery = require('hyperdiscovery')
+let win
 
-const PUBLIC_KEY = process.argv[2]
-
-let feed = hypercore(ram, PUBLIC_KEY, {valueEncoding: 'json'})
-// let feed = hypercore('./remote_data', PUBLIC_KEY, {valueEncoding: 'json'})
-let swarm
-
-feed.on('ready', function() {
-
-    console.log('DAT\tpublic_key\t' + feed.key.toString('hex'))
-    // console.log('DAT\tdiscovery_key\t', feed.discoveryKey.toString('hex'))
-    // console.log()
-
-    swarm = hyperdiscovery(feed)
-    // console.log('SWARM INFO', '\nDNS', swarm._options.dns, '\nDHT', swarm._options.dht, '\nPORT', swarm._options.port, '\n')
-    console.log('DAT\tconnecting as\t' + swarm.id.toString('hex'))
-
-    swarm.on('connection', function(connection, peer) {
-        console.log('DAT\tconnected to\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')    
-        connection.on('close', function() {
-            console.log('DAT\tdisconn from\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')
-        })
+function createWindow () {
+    win = new BrowserWindow({ width: 800, height: 600 })
+    win.loadFile('index.html')
+    // win.webContents.openDevTools()
+    win.on('closed', () => {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        win = null
     })
+}
 
+app.on('ready', createWindow)
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
 })
 
-let stream = feed.createReadStream({start: 0, live: true}) // start at index 0, and keep live to receive new info
-stream.on('data', function(data) {
-    console.log(data)
+app.on('activate', () => {
+    if (win === null) {
+        createWindow()
+    }
 })
 
-
-/*
-
-tab to different keys.
-
-I want to see this on a mapbox map. so integrating that would be great.
-
-*/
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
