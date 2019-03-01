@@ -3,11 +3,28 @@
     <head>
         <meta charset="UTF-8">
         <title>Distributed Sensing Viewer</title>
+        <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js"></script>
+        <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css" rel="stylesheet" /> 
+        <style>
+            body, html {
+                margin: 0;
+                padding: 0;
+            }                
+            #map {
+                position: absolute;
+                left: 50px;
+                top: 50px;                
+                width: 500px;
+                height: 500px;
+            }
+        </style>        
     </head>
     <body>
         <h1>Hello World!</h1>
         We are using node <script>document.write(process.versions.node)</script>,
         Chrome <script>document.write(process.versions.chrome)</script>,
         and Electron <script>document.write(process.versions.electron)</script>.
+        <div id="map"></div>
+        <script src="map.js"></script>                     
     </body>
 </html>
