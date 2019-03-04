@@ -3,9 +3,12 @@ const { app, BrowserWindow } = require('electron')
 let win
 
 function createWindow () {
-    win = new BrowserWindow({ width: 800, height: 600 })
+    win = new BrowserWindow({ width: 1024, height: 800, resizable: false, show: false })
     win.loadFile('index.html')
     // win.webContents.openDevTools()
+    win.once('ready-to-show', () => {
+      win.show()
+    })
     win.on('closed', () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
