@@ -12,9 +12,17 @@ class Map extends Component {
       container: this.container,
       style: 'mapbox://styles/mapbox/streets-v9',
       // style: 'mapbox://styles/brianhouse/cj3yywx4y0dgx2rpmyjfgnixx',
-      center: [-79.38, 43.65],
+      center: [-73.96024, 40.80877],
       zoom: 12.5
     })
+    .addControl(new MapboxGl.NavigationControl({
+        showCompass: false
+    }), "top-left")
+    .addControl(new MapboxGl.ScaleControl({
+        maxWidth: 80,
+        unit: 'imperial'
+    }), "bottom-right")
+
   }
 
   render() {
