@@ -1,6 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import MapboxGl from 'mapbox-gl'
-import './App.css';
+import KeyDrawer from './drawer'
+import './App.css'
+import './mapbox-gl.css'
 
 
 class Map extends Component {
@@ -40,11 +42,12 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
+          <KeyDrawer />
           Hello World
           <Map></Map>
         </header>
       </div>
-    );
+    )
   }
 }
 
