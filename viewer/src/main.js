@@ -1,8 +1,14 @@
 const { app, BrowserWindow } = require('electron')
 const express = require('express')
 const main = express()
+const mustacheExpress = require('mustache-express')
+const path = require('path')
 const port = 3000
 
+main.use(express.static(__dirname + '/../static'));
+main.engine('html', mustacheExpress())
+main.set('view engine', 'mustache')
+main.set('views', __dirname + '/../templates')
 main.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 let window
@@ -34,13 +40,17 @@ app.on('activate', () => {
     }
 })
 
-
 // GET method route
 main.get('/', function (request, response) {
-    response.send('GET request to the homepage')
+    response.render('index.html')
+})
+
+main.get('/farts', function (request, response) {
+    response.send('HA')
 })
 
 // POST method route
 main.post('/', function (request, response) {
     response.send('POST request to the homepage')
 })
+

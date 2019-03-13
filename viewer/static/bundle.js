@@ -17442,7 +17442,7 @@ const $ = require('jquery')
 require('bootstrap')
 require('./map.js')
 
-$('#directory').load('/farts')
+// $('#directory').load('/farts')
 },{"./map.js":6,"bootstrap":1,"jquery":2}],6:[function(require,module,exports){
 const mapboxgl = require('mapbox-gl')
 

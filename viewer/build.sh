@@ -1,1 +1,1 @@
-watchify src/client.js -o 'exorcist bundle.js.map > bundle.js' -d -v
+watchify src/client.js -o 'exorcist static/bundle.js.map > static/bundle.js' -d -v
