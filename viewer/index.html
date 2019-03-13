@@ -2,31 +2,85 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">        
+
         <title>Distributed Sensing Viewer</title>
-        <script src="/mapbox-gl.js"></script>
-        <link href="/mapbox-gl.css" rel="stylesheet" /> 
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link href="mapbox-gl.css" rel="stylesheet" /> 
         <style>
             body, html {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
-            }                
-            #map {
+            }           
+
+            #directory {
+                /*background-color: yellow;*/
                 position: absolute;
-                left: 50px;
-                top: 50px;                
-                width: 500px;
-                height: 500px;
-                border: 1px solid black;
+                left: 0px;
+                top: 0px;
+                bottom: 0px;
+                width: 324px;
+                padding-left: 20px;
+                padding-top: 20px;
+                overflow-x: hidden;
+                /*border-right: 1px solid #ccc;*/
             }
+
+            #main {
+                /*background-color: orange;*/
+                position: absolute;
+                left: 324px;
+                top: 0px;
+                bottom: 0px;
+                padding: 20px;
+                padding-top: 20px;                
+            }
+
+            #map {
+                width: 660px;
+                height: 495px;
+                border: 1px solid #ccc;
+            }
+
         </style>        
     </head>
     <body>
-        <h1>Hello World!!</h1>
-        We are using node <script>document.write(process.versions.node)</script>,
-        Chrome <script>document.write(process.versions.chrome)</script>,
-        and Electron <script>document.write(process.versions.electron)</script>.
-        <div id="map"></div>
-        <script src="map.js"></script>                     
-    </body>
+
+        <div id="directory">
+<h4>Sensor feeds</h4>
+<ul class="list-group">
+    <a href="#" class="list-group-item list-group-item-action">d5e980a5e34bd4de5b946c5a7b202f8e4c1413da2346ee0785c7469d941606c2</a>
+    <a href="#" class="list-group-item list-group-item-action active">Dapibus ac facilisis in</a>
+    <a href="#" class="list-group-item list-group-item-action">Morbi leo risus</a>
+    <a href="#" class="list-group-item list-group-item-action">Porta ac consectetur ac</a>
+    <a href="#" class="list-group-item list-group-item-action">Vestibulum at eros</a>
+</ul>            
+<p></p>
+<form>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Subscribe to new feed</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Sensor key">
+        <small id="emailHelp" class="form-text text-muted"></small>
+        <input type="email" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp" placeholder="Sensor name">
+        <small id="emailHelp" class="form-text text-muted"></small>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>            
+
+        </div>
+
+        <div id="main">
+            <h4>&nbsp;</h4>            
+            <div id="map"></div>
+            <br />
+            <span class="badge badge-pill badge-info">d5e980a5e34bd4de5b946c5a7b202f8e4c1413da2346ee0785c7469d941606c2</span>
+            <p>
+                this is some info
+            </p>
+        </div>
+    <script src="bundle.js"></script>
+</body>
 </html>
+

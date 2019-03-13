@@ -6,6 +6,16 @@
     "start": "electron ."
   },
   "dependencies": {
-    "electron": "^4.0.8"
+    "boostrap": "^2.0.0",
+    "bootstrap": "^4.3.1",
+    "electron": "^4.0.8",
+    "express": "^4.16.4",
+    "hypercore": "^6.25.0",
+    "hyperdiscovery": "^8.0.0",
+    "jquery": "^3.3.1",
+    "mapbox-gl": "^0.53.1",
+    "mustache-express": "^1.2.8",
+    "popper.js": "^1.14.7",
+    "random-access-memory": "^3.1.1"
   }
 }

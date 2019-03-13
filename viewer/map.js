@@ -1,3 +1,5 @@
+const mapboxgl = require('mapbox-gl')
+
 let map = null;
 let position = null;
 

@@ -1,16 +1,19 @@
 const { app, BrowserWindow } = require('electron')
+const express = require('express')
+const main = express()
+const port = 3000
 
-let main
+let window
 
 function createWindow () {
-    main = new BrowserWindow({ width: 1024, height: 800, resizable: false, show: false })
-    main.loadFile('index.html')
-    // main.webContents.openDevTools()
-    main.once('ready-to-show', () => {
-      main.show()
+    window = new BrowserWindow({ width: 1024, height: 800, resizable: false, show: false, nodeIntegration: true })
+    window.loadFile('index.html')
+    window.webContents.openDevTools()
+    window.once('ready-to-show', () => {
+      window.show()
     })
-    main.on('closed', () => {
-        main = null
+    window.on('closed', () => {
+        window = null
     })
 }
 
@@ -23,11 +26,19 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-    if (main === null) {
+    if (window === null) {
         createWindow()
     }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// GET method route
+main.get('/', function (request, response) {
+    response.send('GET request to the homepage')
+})
 
+// POST method route
+main.post('/', function (request, response) {
+    response.send('POST request to the homepage')
+})
+
+main.listen(port, () => console.log(`Example app listening on port ${port}!`))
