@@ -4,7 +4,8 @@ let main
 
 function createWindow () {
     main = new BrowserWindow({ width: 1024, height: 800, resizable: false, show: false })
-    main.loadURL('http://localhost:3000')
+    main.loadFile('index.html')
+    // main.webContents.openDevTools()
     main.once('ready-to-show', () => {
       main.show()
     })
@@ -29,3 +30,4 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+

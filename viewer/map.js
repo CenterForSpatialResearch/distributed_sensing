@@ -1,7 +1,6 @@
 let map = null;
 let position = null;
 
-if (!mapboxgl.supported()) alert("Your browser does not support Mapbox GL");
 mapboxgl.accessToken = "pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ";
 map = new mapboxgl.Map({
     container: "map",
