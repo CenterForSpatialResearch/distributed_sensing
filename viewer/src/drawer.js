@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
@@ -37,37 +37,32 @@ const styles = theme => ({
   },
 })
 
-function KeyDrawer(props) {
-  const { classes } = props
-
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            CURRENT KEY
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer className={classes.drawer} variant="permanent" classes={{ paper: classes.drawerPaper, }} anchor="left">
-        <div className={classes.toolbar} />
-        <Divider />
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-      </Drawer>
-    </div>
-  )
+class KeyDrawer extends Component {
+  render() {
+    return (
+      <div className="root">
+        <CssBaseline />
+        <AppBar position="fixed" className={styles.appBar}>
+          <Toolbar>
+            <Typography variant="h6" color="inherit" noWrap>
+              CURRENT KEY
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer className={styles.drawer} variant="permanent" classes={{ paper: styles.drawerPaper, }} anchor="left">
+          <div className={styles.toolbar} />
+          <Divider />
+          <List>
+            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+        </Drawer>
+      </div>
+    )
+  }
 }
-
-KeyDrawer.propTypes = {
-  classes: PropTypes.object.isRequired,
-}
-
-export default withStyles(styles)(KeyDrawer)
+export default KeyDrawer

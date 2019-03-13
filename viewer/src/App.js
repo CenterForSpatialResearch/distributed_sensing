@@ -33,6 +33,7 @@ class Map extends Component {
       </div>
     )
   }
+  
 }
 
 
@@ -42,7 +43,6 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <KeyDrawer />
           Hello World
           <Map></Map>
         </header>
