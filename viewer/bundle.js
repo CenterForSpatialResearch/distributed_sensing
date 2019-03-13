@@ -1,32 +1,4 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-const $ = require('jquery')
-require('bootstrap')
-require('./map.js')
-
-},{"./map.js":2,"bootstrap":3,"jquery":4}],2:[function(require,module,exports){
-const mapboxgl = require('mapbox-gl')
-
-let map = null;
-let position = null;
-
-mapboxgl.accessToken = "pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ";
-map = new mapboxgl.Map({
-    container: "map",
-    style: "mapbox://styles/brianhouse/cj3yywx4y0dgx2rpmyjfgnixx",
-    center: [-73.96024, 40.80877],
-    zoom: 16
-});
-
-map.addControl(new mapboxgl.NavigationControl({
-    showCompass: false
-}), "top-left");
-
-map.addControl(new mapboxgl.ScaleControl({
-    maxWidth: 80,
-    unit: 'imperial'
-}), "bottom-right");
-
-},{"mapbox-gl":5}],3:[function(require,module,exports){
 /*!
   * Bootstrap v4.3.1 (https://getbootstrap.com/)
   * Copyright 2011-2019 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
@@ -4463,7 +4435,7 @@ map.addControl(new mapboxgl.ScaleControl({
 }));
 
 
-},{"jquery":4,"popper.js":6}],4:[function(require,module,exports){
+},{"jquery":2,"popper.js":4}],2:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.3.1
  * https://jquery.com/
@@ -14829,7 +14801,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],5:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /* Mapbox GL JS is licensed under the 3-Clause BSD License. Full text of license: https://github.com/mapbox/mapbox-gl-js/blob/v0.53.1/LICENSE.txt */
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -14871,7 +14843,7 @@ return mapboxgl;
 }));
 
 
-},{}],6:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 (function (global){
 /**!
  * @fileOverview Kickass library to create and place poppers near their reference elements.
@@ -17465,5 +17437,34 @@ return Popper;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}]},{},[1])
+},{}],5:[function(require,module,exports){
+const $ = require('jquery')
+require('bootstrap')
+require('./map.js')
+
+$('#directory').load('/farts')
+},{"./map.js":6,"bootstrap":1,"jquery":2}],6:[function(require,module,exports){
+const mapboxgl = require('mapbox-gl')
+
+let map = null;
+let position = null;
+
+mapboxgl.accessToken = "pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ";
+map = new mapboxgl.Map({
+    container: "map",
+    style: "mapbox://styles/brianhouse/cj3yywx4y0dgx2rpmyjfgnixx",
+    center: [-73.96024, 40.80877],
+    zoom: 16
+});
+
+map.addControl(new mapboxgl.NavigationControl({
+    showCompass: false
+}), "top-left");
+
+map.addControl(new mapboxgl.ScaleControl({
+    maxWidth: 80,
+    unit: 'imperial'
+}), "bottom-right");
+
+},{"mapbox-gl":3}]},{},[5])
 //# sourceMappingURL=bundle.js.map
