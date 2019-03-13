@@ -1,5 +1,6 @@
 const $ = require('jquery')
 require('bootstrap')
-require('./map.js')
-
-// $('#directory').load('/farts')
+$('#directory').load('/directory')
+$('#main').load('/main', function() {
+	require('./map.js')	
+})

@@ -41,16 +41,20 @@ app.on('activate', () => {
 })
 
 // GET method route
-main.get('/', function (request, response) {
+main.get('/', function(request, response) {
     response.render('index.html')
 })
 
-main.get('/farts', function (request, response) {
-    response.send('HA')
+main.get('/directory', function(request, response) {
+    response.render('directory.html')
+})
+
+main.get('/main', function(request, response) {
+    response.render('main.html')
 })
 
 // POST method route
-main.post('/', function (request, response) {
+main.post('/', function(request, response) {
     response.send('POST request to the homepage')
 })
 

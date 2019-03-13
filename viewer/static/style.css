@@ -1,0 +1,28 @@
+#directory {
+    /*background-color: yellow;*/
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 324px;
+    padding-left: 20px;
+    padding-top: 20px;
+    overflow-x: hidden;
+    /*border-right: 1px solid #ccc;*/
+}
+
+#main {
+    /*background-color: orange;*/
+    position: absolute;
+    left: 324px;
+    top: 0px;
+    bottom: 0px;
+    padding: 20px;
+    padding-top: 20px;                
+}
+
+#map {
+    width: 660px;
+    height: 495px;
+    border: 1px solid #ccc;
+}
