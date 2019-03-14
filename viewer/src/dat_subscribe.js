@@ -4,10 +4,10 @@ let ram = require('random-access-memory')
 let hypercore = require('hypercore')
 let hyperdiscovery = require('hyperdiscovery')
 
-const PUBLIC_KEY = process.argv[2]
+const PUBLIC_KEY = "55c86cb0f6d902c05e599debb5fffc8c9ef559768a21735599820f4353ef8ae3"
 
-let feed = hypercore(ram, PUBLIC_KEY, {valueEncoding: 'json'})
-// let feed = hypercore('./remote_data', PUBLIC_KEY, {valueEncoding: 'json'})
+// let feed = hypercore(ram, PUBLIC_KEY, {valueEncoding: 'json'})
+let feed = hypercore('./data/' + PUBLIC_KEY, PUBLIC_KEY, {valueEncoding: 'json'})
 let swarm
 
 feed.on('ready', function() {
