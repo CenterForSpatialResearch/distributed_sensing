@@ -4,8 +4,9 @@
     left: 0px;
     top: 0px;
     bottom: 0px;
-    width: 324px;
+    width: 326px;
     padding-left: 20px;
+    padding-right: 20px;
     padding-top: 20px;
     overflow-x: hidden;
     /*border-right: 1px solid #ccc;*/
@@ -17,12 +18,15 @@
     left: 324px;
     top: 0px;
     bottom: 0px;
-    padding: 20px;
     padding-top: 20px;                
 }
 
 #map {
-    width: 660px;
+    width: 680px;
     height: 495px;
     border: 1px solid #ccc;
+}
+
+.form-control-sm {
+    margin-bottom: 5px;
 }

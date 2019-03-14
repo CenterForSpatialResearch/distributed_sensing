@@ -5,13 +5,10 @@
     {{ /keys }}
 </ul>            
 <p></p>
-<form>
-    <div class="form-group">
-        <label for="exampleInputEmail1">Subscribe to new feed</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Sensor key (hex)">
-        <small id="emailHelp" class="form-text text-muted"></small>
-        <input type="email" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp" placeholder="Name for this key">
-        <small id="emailHelp" class="form-text text-muted"></small>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
+
+<h6>New feed</h6>
+<form id="new-feed-form">
+    <input type="text" class="form-control form-control-sm" id="key_input" maxLength="64" placeholder="Sensor key (hex)">
+    <input type="text" class="form-control form-control-sm" id="name_input" placeholder="Name for this key" maxlength="30">
+    <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
 </form>
