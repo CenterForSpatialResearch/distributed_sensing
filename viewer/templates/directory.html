@@ -1,8 +1,8 @@
 <h4>Sensor feeds</h4>
 <ul class="list-group">
-    {{#keys}}
-    <a href="#" class="directory-item list-group-item list-group-item-action active">{{key}}</a>
-    {{/keys}}
+    {{ #keys }}
+    <li class="directory-item list-group-item list-group-item-action" key="{{ key }}">{{ name }}</li>
+    {{ /keys }}
 </ul>            
 <p></p>
 <form>
@@ -10,7 +10,7 @@
         <label for="exampleInputEmail1">Subscribe to new feed</label>
         <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Sensor key (hex)">
         <small id="emailHelp" class="form-text text-muted"></small>
-        <input type="email" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp" placeholder="Short description for this key">
+        <input type="email" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp" placeholder="Name for this key">
         <small id="emailHelp" class="form-text text-muted"></small>
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>
