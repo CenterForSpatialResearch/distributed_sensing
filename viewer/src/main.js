@@ -7,6 +7,7 @@ const path = require('path')
 const del = require('del')
 
 const hypercore = require('hypercore')
+const sensing = require('./sensing')
 
 const express = require('express')
 const main = express()
@@ -80,24 +81,29 @@ main.get('/main/:key', (request, response) => {
 })
 
 main.post('/subscribe', (request, response) => {
+    console.log(`/subscribe`)        
     let key = request.body.key
     let name = request.body.name
-    console.log(`Subcribing to ${name}: ${key}`)
-    let filepath = path.join(__dirname, '..', 'data', key)
-    if (fs.existsSync(filepath)) return
-    let feed = hypercore(filepath, key, {valueEncoding: 'json'})
-    feed.on('ready', function() {
-        fs.writeFileSync(path.join(filepath, 'name'), name)
+    sensing.subscribe(key, name, () => {
         response.send('OK')
     })
 })
 
 main.post('/unsubscribe', (request, response) => {
+    console.log(`/unsubscribe`)    
     let key = request.body.key
     console.log(`Unsubcribing from ${key}`)
     let filepath = path.join(__dirname, '..', 'data', key)
     if (!fs.existsSync(filepath)) return
     del.sync(filepath)
     response.send('OK')
+})
+
+main.post('/fetch', (request, response) => {
+    console.log(`/fetch`)
+    let key = request.body.key
+    sensing.fetch(key, () => {
+        response.send('OK')
+    })
 })
 

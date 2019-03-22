@@ -17508,6 +17508,16 @@ let loadMain = (key) => {
                 $('#feedback').modal('show') 
             })     
         })        
+        $('#fetch').click(function(e) {
+            let key = $(this).attr('key')    
+            $.post('/fetch', {key: key}, (data) => {
+                console.log('Fetching...')
+                
+            }).fail((response) => {
+                $('#feedback_content').html(response.status + " " + response.statusText)
+                $('#feedback').modal('show') 
+            })     
+        })  
         makeMap()        
     })     
 }
