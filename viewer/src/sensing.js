@@ -2,11 +2,12 @@
 
 const path = require('path')
 const fs = require('fs')
+const hypercore = require('hypercore')
 
-let hypercore = require('hypercore')
-let hyperdiscovery = require('hyperdiscovery')
+// const hypercore = require('hypercore')
+const hyperdiscovery = require('hyperdiscovery')
 
-let subscribe = (key, name, callback) => {
+const subscribe = (key, name, callback) => {
 
     console.log(`Subcribing to (${name}) ${key}`)
 
@@ -15,18 +16,20 @@ let subscribe = (key, name, callback) => {
     let feed = hypercore(filepath, key, {valueEncoding: 'json'})
     feed.on('ready', function() {
         fs.writeFileSync(path.join(filepath, 'name'), name)
-        feed.close()
-        callback()
+        feed.close(() => {
+            console.log('--> feed successfully closed')
+            callback()
+        })
     })
 }
 
 
-let fetch = (key, callback) => {
+const fetch = (key) => {
 
     console.log(`Fetching data for ${key}`)
 
-    let filepath = path.join(__dirname, '..', 'data', key)
-    let feed = hypercore(filepath, key, {valueEncoding: 'json'})
+    const filepath = path.join(__dirname, '..', 'data', key)
+    const feed = hypercore(filepath, key, {valueEncoding: 'json'})
     let swarm
 
     feed.on('ready', () => {
@@ -34,24 +37,34 @@ let fetch = (key, callback) => {
         swarm = hyperdiscovery(feed)
         // console.log('DAT\tconnecting as\t' + swarm.id.toString('hex'))
         swarm.on('connection', function(connection, peer) {
+            console.log('--> connected')
             // console.log('DAT\tconnected to\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')    
             connection.on('close', function() {
                 // console.log('DAT\tdisconn from\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')
-            })
+            })    
+        })        
+        console.log('--> feed length', feed.length)
+        console.log('--> readable?', feed.readable)
+        if (feed.readable) {        
             feed.download({start: 0, end: feed.length}, (e) => {
                 if (e) {
                     return console.log(e)
                 }
-                console.log('--> success')
+                console.log('--> fetch complete')
                 feed.close((e) => {
                     if (e) {
                         return console.log(e)
                     }
-                    callback()
+                    console.log('--> feed successfully closed')                    
+                    swarm.close()                    
                 })
-            })            
-        })        
+            })                  
+        } else {
+            console.log('--> something went wrong')
+        }        
     })
+
+    // let stream = feed.createReadStream({start: 0, end: feed.length, live: false, wait: true}) // start at index 0, and keep live to receive new info
 }
 
 

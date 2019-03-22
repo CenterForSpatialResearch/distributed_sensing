@@ -102,8 +102,7 @@ main.post('/unsubscribe', (request, response) => {
 main.post('/fetch', (request, response) => {
     console.log(`/fetch`)
     let key = request.body.key
-    sensing.fetch(key, () => {
-        response.send('OK')
-    })
+    sensing.fetch(key)
+    response.send('OK')
 })
 
