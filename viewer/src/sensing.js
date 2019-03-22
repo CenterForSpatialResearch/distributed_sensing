@@ -24,7 +24,7 @@ const subscribe = (key, name, callback) => {
 }
 
 
-const fetch = (key) => {
+const fetch = (key, callback) => {
 
     console.log(`Fetching data for ${key}`)
 
@@ -56,7 +56,8 @@ const fetch = (key) => {
                         return console.log(e)
                     }
                     console.log('--> feed successfully closed')                    
-                    swarm.close()                    
+                    swarm.close()    
+                    callback()                
                 })
             })                  
         } else {
@@ -64,7 +65,6 @@ const fetch = (key) => {
         }        
     })
 
-    // let stream = feed.createReadStream({start: 0, end: feed.length, live: false, wait: true}) // start at index 0, and keep live to receive new info
 }
 
 

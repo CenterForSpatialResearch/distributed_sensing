@@ -17444,7 +17444,7 @@ const $ = require('jquery')
 require('bootstrap')
 require('./map.js')
 
-let loadDirectory = (key) => {
+const loadDirectory = (key) => {
     $('#directory').load('/directory', () => {
 
         if (key != null) {
@@ -17496,8 +17496,9 @@ let loadDirectory = (key) => {
     })
 }
 
-let loadMain = (key) => {
+const loadMain = (key) => {
     $('#main').load(`/main/${key}`, () => {
+
         $('#unsubscribe').click(function(e) {
             let key = $(this).attr('key')    
             $.post('/unsubscribe', {key: key}, (data) => {
@@ -17508,64 +17509,79 @@ let loadMain = (key) => {
                 $('#feedback').modal('show') 
             })     
         })        
-        $('#fetch').click(function(e) {
+
+        $('#refresh').click(function(e) {
             let key = $(this).attr('key')    
-            $.post('/fetch', {key: key}, (data) => {
-                console.log('Fetching...')
-                
-            }).fail((response) => {
-                $('#feedback_content').html(response.status + " " + response.statusText)
-                $('#feedback').modal('show') 
-            })     
+            fetchData(key)
         })  
-        makeMap()        
+
+        makeMap()
+
+        fetchData(key)
+
     })     
 }
 
+const fetchData = (key, callback) => {
+    $.post('/fetch', {key: key}, (data) => {
+        $.getJSON(`/data/${key}`, (data) => {
+            let points = []
+            for (const datum of data) {
+                if (typeof datum === 'object') {
+                    if (    ('latitude' in datum || 'lat' in datum || 'Latitude' in datum) && ('longitude' in datum || 'lon' in datum || 'lng' in datum || 'Longitude' in datum)  ) {
+                        points.push(datum)
+                    }
+                }
+            }
+            updateMap(points)
+        })  
+        if (callback) {              
+            callback()
+        }
+    }).fail((response) => {
+        $('#feedback_content').html(response.status + " " + response.statusText)
+        $('#feedback').modal('show') 
+    })     
+}
 
-
-let checkKey = (input) => {
-    let re = /[0-9A-Fa-f]{64}/g
+const checkKey = (input) => {
+    const re = /[0-9A-Fa-f]{64}/g
     return re.test(input)
 }
 
 loadDirectory()
 
-
-/*
-
-how to read data from a feed.
-
--- a type for the feeds?
-
-SLEEP data format -- is there metadata in there?
-
-*/
 },{"./map.js":6,"bootstrap":1,"jquery":2}],6:[function(require,module,exports){
 const mapboxgl = require('mapbox-gl')
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ';
 
+let map
+
 window.makeMap = () => {
 
-	let map = new mapboxgl.Map({
-	    container: 'map',
-	    style: 'mapbox://styles/brianhouse/cj3yywx4y0dgx2rpmyjfgnixx',
-	    center: [-73.96024, 40.80877],
-	    zoom: 16,
-	    attributionControl: false,
-	})
+    map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/brianhouse/cj3yywx4y0dgx2rpmyjfgnixx',
+        center: [-73.96024, 40.80877],
+        zoom: 16,
+        attributionControl: false,
+    })
 
-	map.addControl(new mapboxgl.NavigationControl({
-	    showCompass: false
-	}), 'top-left')
+    map.addControl(new mapboxgl.NavigationControl({
+        showCompass: false
+    }), 'top-left')
 
-	map.addControl(new mapboxgl.ScaleControl({
-	    maxWidth: 80,
-	    unit: 'imperial'
-	}), 'bottom-right')
+    map.addControl(new mapboxgl.ScaleControl({
+        maxWidth: 80,
+        unit: 'imperial'
+    }), 'bottom-right')
 
-	return map
+}
+
+window.updateMap = (points) => {
+
+    console.log(points)
 
 }
 },{"mapbox-gl":3}]},{},[5])

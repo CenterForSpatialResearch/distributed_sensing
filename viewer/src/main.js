@@ -5,6 +5,7 @@ const { app, BrowserWindow } = require('electron')
 const fs = require('fs')
 const path = require('path')
 const del = require('del')
+const lineReader = require('line-reader')
 
 const hypercore = require('hypercore')
 const sensing = require('./sensing')
@@ -80,6 +81,30 @@ main.get('/main/:key', (request, response) => {
     response.render('main.html', {key: key, name: name})
 })
 
+main.get('/data/:key', (request, response) => {
+    console.log('/data')
+    let key = request.params.key
+    let filepath = path.join(__dirname, '..', 'data', key, 'data')
+    let data = []
+    if (fs.existsSync(filepath)) {    
+        lineReader.eachLine(filepath, (line, last) => {
+            let d = JSON.parse(line)
+            if (typeof d === 'string') {
+                try {
+                    d = JSON.parse(d)
+                } catch (e) {}
+            }
+            data.push(d)
+            if (last) {
+                console.log(data)
+                response.json(data)
+            }
+        })
+    } else {
+        response.json(data)
+    }
+})
+
 main.post('/subscribe', (request, response) => {
     console.log(`/subscribe`)        
     let key = request.body.key
@@ -102,7 +127,8 @@ main.post('/unsubscribe', (request, response) => {
 main.post('/fetch', (request, response) => {
     console.log(`/fetch`)
     let key = request.body.key
-    sensing.fetch(key)
-    response.send('OK')
+    sensing.fetch(key, () => {
+        response.send('OK')
+    })
 })
 
