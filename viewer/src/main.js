@@ -4,6 +4,7 @@ const { app, BrowserWindow } = require('electron')
 
 const fs = require('fs')
 const path = require('path')
+const del = require('del')
 
 const hypercore = require('hypercore')
 
@@ -91,4 +92,12 @@ main.post('/subscribe', (request, response) => {
     })
 })
 
+main.post('/unsubscribe', (request, response) => {
+    let key = request.body.key
+    console.log(`Unsubcribing from ${key}`)
+    let filepath = path.join(__dirname, '..', 'data', key)
+    if (!fs.existsSync(filepath)) return
+    del.sync(filepath)
+    response.send('OK')
+})
 

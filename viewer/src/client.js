@@ -58,9 +58,21 @@ let loadDirectory = (key) => {
 
 let loadMain = (key) => {
     $('#main').load(`/main/${key}`, () => {
-        makeMap()
+        $('#unsubscribe').click(function(e) {
+            let key = $(this).attr('key')    
+            $.post('/unsubscribe', {key: key}, (data) => {
+                loadDirectory(key)
+                $('#main').html('')
+            }).fail((response) => {
+                $('#feedback_content').html(response.status + " " + response.statusText)
+                $('#feedback').modal('show') 
+            })     
+        })        
+        makeMap()        
     })     
 }
+
+
 
 let checkKey = (input) => {
     let re = /[0-9A-Fa-f]{64}/g
