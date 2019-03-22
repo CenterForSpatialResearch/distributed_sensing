@@ -3,13 +3,18 @@
 const { app, BrowserWindow } = require('electron')
 
 const fs = require('fs')
+const path = require('path')
+
+const hypercore = require('hypercore')
 
 const express = require('express')
 const main = express()
 const mustacheExpress = require('mustache-express')
-const path = require('path')
+const bodyParser = require('body-parser')
 const port = 3000
 
+main.use(bodyParser.json())
+main.use(bodyParser.urlencoded({extended: true}))
 main.use(express.static(__dirname + '/../static'))
 main.engine('html', mustacheExpress())
 main.set('views', __dirname + '/../templates')
@@ -51,7 +56,10 @@ main.get('/', (request, response) => {
 main.get('/directory', (request, response) => {
     let directory = path.join(__dirname, '..', 'data')
     fs.readdir(directory, (err, items) => {
-        if (err) return
+        if (err) {
+            response.send('Data directory missing')
+            return
+        }
         let keys = []
         items.forEach((item) => {
             let filepath = path.join(directory, item)
@@ -70,8 +78,17 @@ main.get('/main/:key', (request, response) => {
     response.render('main.html', {key: key, name: name})
 })
 
-main.post('/', (request, response) => {
-    response.send('POST request to the homepage')
+main.post('/subscribe', (request, response) => {
+    let key = request.body.key
+    let name = request.body.name
+    console.log(`Subcribing to ${name}: ${key}`)
+    let filepath = path.join(__dirname, '..', 'data', key)
+    if (fs.existsSync(filepath)) return
+    let feed = hypercore(filepath, key, {valueEncoding: 'json'})
+    feed.on('ready', function() {
+        fs.writeFileSync(path.join(filepath, 'name'), name)
+        console.log('finished')
+    })
 })
 
 

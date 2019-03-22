@@ -34,9 +34,13 @@ let loadDirectory = () => {
             if (!valid) {
                 $('#feedback').modal('show')               
             } else {
-                // send some shit to the server
-                // on success,
-                loadDirectory()
+                console.log('sending to subscribe')
+                $.post('/subscribe', {key: key, name: name}, (data) => {
+                    loadDirectory()
+                }).fail((response) => {
+                    $('#feedback_content').html(response.status + " " + response.statusText)
+                    $('#feedback').modal('show') 
+                }) 
             }
         })
 
