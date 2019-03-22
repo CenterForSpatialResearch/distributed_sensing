@@ -17559,10 +17559,13 @@ loadDirectory()
 
 },{"./map.js":6,"bootstrap":1,"jquery":2}],6:[function(require,module,exports){
 const mapboxgl = require('mapbox-gl')
+const $ = require('jquery')
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ';
 
 window.makeMap = () => {
+
+    $('#map').show()
 
     let map = new mapboxgl.Map({
         container: 'map',
@@ -17618,5 +17621,5 @@ window.makeMap = () => {
 
 }
 
-},{"mapbox-gl":3}]},{},[5])
+},{"jquery":2,"mapbox-gl":3}]},{},[5])
 //# sourceMappingURL=bundle.js.map

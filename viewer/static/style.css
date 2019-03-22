@@ -25,6 +25,7 @@
     width: 680px;
     height: 495px;
     border: 1px solid #ccc;
+    display: none;
 }
 
 .form-control-sm {
