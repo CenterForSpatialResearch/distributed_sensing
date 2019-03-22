@@ -87,7 +87,7 @@ main.post('/subscribe', (request, response) => {
     let feed = hypercore(filepath, key, {valueEncoding: 'json'})
     feed.on('ready', function() {
         fs.writeFileSync(path.join(filepath, 'name'), name)
-        console.log('finished')
+        response.send('OK')
     })
 })
 

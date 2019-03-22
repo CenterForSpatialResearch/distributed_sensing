@@ -4,8 +4,17 @@ const $ = require('jquery')
 require('bootstrap')
 require('./map.js')
 
-let loadDirectory = () => {
+let loadDirectory = (key) => {
     $('#directory').load('/directory', () => {
+
+        if (key != null) {
+            $('.directory-item').each(function (index, value) {
+                if ($(this).attr('key') == key) {
+                    $(this).addClass('active')
+                    loadMain(key)
+                }
+            })
+        }
 
         $('.directory-item').css('cursor', 'pointer')
         
@@ -34,9 +43,9 @@ let loadDirectory = () => {
             if (!valid) {
                 $('#feedback').modal('show')               
             } else {
-                console.log('sending to subscribe')
+                console.log('/subscribe')
                 $.post('/subscribe', {key: key, name: name}, (data) => {
-                    loadDirectory()
+                    loadDirectory(key)
                 }).fail((response) => {
                     $('#feedback_content').html(response.status + " " + response.statusText)
                     $('#feedback').modal('show') 
