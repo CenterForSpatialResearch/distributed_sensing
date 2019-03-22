@@ -17513,6 +17513,20 @@ const loadMain = (key) => {
             })     
         })        
 
+        $('#download').click(function(e) {
+            console.log('export')
+            let key = $(this).attr('key')    
+            $.getJSON(`/data/${key}`, (data) => {            
+                let element = document.createElement('a');
+                element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data, null, '\t')))
+                element.setAttribute('download', 'data.json')
+                element.style.display = 'none'
+                document.body.appendChild(element)
+                element.click()
+                document.body.removeChild(element)
+            })
+        })  
+
         $('#refresh').click(function(e) {
             let key = $(this).attr('key')    
             fetchData(key)
