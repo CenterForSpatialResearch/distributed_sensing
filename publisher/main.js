@@ -71,4 +71,10 @@ server.listen(port, (err) => {
 })
 
 
-// curl http://localhost:5280 --data '{"latitude": 1234, "longitude": 5678}'
+/*
+
+curl http://localhost:5280 --data '{"latitude": 40.807537, "longitude": -73.962570}'
+curl http://localhost:5280 --data '{"latitude": 36.188969, "longitude": -94.560997}'
+curl http://localhost:5280 --data '{"latitude": 45.444130, "longitude": -122.669685}'
+
+*/

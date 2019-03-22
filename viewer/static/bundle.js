@@ -17444,6 +17444,8 @@ const $ = require('jquery')
 require('bootstrap')
 require('./map.js')
 
+let map = null
+
 const loadDirectory = (key) => {
     $('#directory').load('/directory', () => {
 
@@ -17497,6 +17499,7 @@ const loadDirectory = (key) => {
 }
 
 const loadMain = (key) => {
+    map = null
     $('#main').load(`/main/${key}`, () => {
 
         $('#unsubscribe').click(function(e) {
@@ -17515,8 +17518,6 @@ const loadMain = (key) => {
             fetchData(key)
         })  
 
-        makeMap()
-
         fetchData(key)
 
     })     
@@ -17533,7 +17534,12 @@ const fetchData = (key, callback) => {
                     }
                 }
             }
-            updateMap(points)
+            if (points.length) {
+                if (map == null) {
+                    map = makeMap()
+                }
+                map.update(points)
+            }
         })  
         if (callback) {              
             callback()
@@ -17556,15 +17562,12 @@ const mapboxgl = require('mapbox-gl')
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ';
 
-let map
-
 window.makeMap = () => {
 
-    map = new mapboxgl.Map({
+    let map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/brianhouse/cj3yywx4y0dgx2rpmyjfgnixx',
-        center: [-73.96024, 40.80877],
-        zoom: 16,
+        zoom: 1,
         attributionControl: false,
     })
 
@@ -17577,12 +17580,43 @@ window.makeMap = () => {
         unit: 'imperial'
     }), 'bottom-right')
 
+
+    map.update = (points) => {
+
+        let markers = []
+
+        for (const point of points) {
+
+            let lon = point['longitude'] || point['Longitude'] || point['lon'] || point['lng']
+            let lat = point['latitude'] || point['Latitude'] || point['lat']
+
+            let marker = new mapboxgl.Marker()    
+            marker.setLngLat([lon, lat])
+            marker.addTo(map)  
+
+            let popup = new mapboxgl.Popup()
+            popup.setHTML(point)
+            marker.setPopup(popup)
+
+            markers.push(marker)
+
+        }
+
+        map.setCenter(markers[0].getLngLat())
+
+        if (markers.length > 1) {
+            let bounds = new mapboxgl.LngLatBounds()
+            for (const marker of markers) {
+                bounds.extend(marker.getLngLat())
+            }
+            map.fitBounds(bounds, {padding: {top: 30, bottom: 30, left: 30, right: 30}})
+        }
+
+    }
+
+    return map
+
 }
 
-window.updateMap = (points) => {
-
-    console.log(points)
-
-}
 },{"mapbox-gl":3}]},{},[5])
 //# sourceMappingURL=bundle.js.map

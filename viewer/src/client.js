@@ -4,6 +4,8 @@ const $ = require('jquery')
 require('bootstrap')
 require('./map.js')
 
+let map = null
+
 const loadDirectory = (key) => {
     $('#directory').load('/directory', () => {
 
@@ -57,6 +59,7 @@ const loadDirectory = (key) => {
 }
 
 const loadMain = (key) => {
+    map = null
     $('#main').load(`/main/${key}`, () => {
 
         $('#unsubscribe').click(function(e) {
@@ -75,8 +78,6 @@ const loadMain = (key) => {
             fetchData(key)
         })  
 
-        makeMap()
-
         fetchData(key)
 
     })     
@@ -93,7 +94,12 @@ const fetchData = (key, callback) => {
                     }
                 }
             }
-            updateMap(points)
+            if (points.length) {
+                if (map == null) {
+                    map = makeMap()
+                }
+                map.update(points)
+            }
         })  
         if (callback) {              
             callback()

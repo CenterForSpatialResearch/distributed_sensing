@@ -2,19 +2,16 @@
 
 const path = require('path')
 const fs = require('fs')
-const hypercore = require('hypercore')
 
-// const hypercore = require('hypercore')
+const hypercore = require('hypercore')
 const hyperdiscovery = require('hyperdiscovery')
 
 const subscribe = (key, name, callback) => {
-
-    console.log(`Subcribing to (${name}) ${key}`)
-
+    console.log(`Subscribing to (${name}) ${key}`)
     let filepath = path.join(__dirname, '..', 'data', key)
-    if (fs.existsSync(filepath)) return
+    if (fs.existsSync(filepath)) return callback()
     let feed = hypercore(filepath, key, {valueEncoding: 'json'})
-    feed.on('ready', function() {
+    feed.on('ready', () => {
         fs.writeFileSync(path.join(filepath, 'name'), name)
         feed.close(() => {
             console.log('--> feed successfully closed')
@@ -22,7 +19,6 @@ const subscribe = (key, name, callback) => {
         })
     })
 }
-
 
 const fetch = (key, callback) => {
 
@@ -33,39 +29,54 @@ const fetch = (key, callback) => {
     let swarm
 
     feed.on('ready', () => {
-        // console.log('DAT\tpublic_key\t' + feed.key.toString('hex'))
         swarm = hyperdiscovery(feed)
-        // console.log('DAT\tconnecting as\t' + swarm.id.toString('hex'))
-        swarm.on('connection', function(connection, peer) {
+        let downloading = false
+        swarm.on('connection', async (connection, peer) => {
             console.log('--> connected')
-            // console.log('DAT\tconnected to\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')    
-            connection.on('close', function() {
-                // console.log('DAT\tdisconn from\t' + peer.id.toString('hex') + '\t(' + peer.type + ' '+ peer.host + ':' + peer.port + ')')
-            })    
+            connection.on('close', () => {
+                console.log('--> disconnected')
+            })
+            if (!downloading) {
+                downloading = true                
+                console.log('--> feed length', feed.length)                
+                await sleep(200)       // this should not be necessary, but the ready event isnt populated
+                console.log('--> feed length', feed.length)
+                console.log('--> readable?', feed.readable)
+                if (feed.readable && feed.length > 0) {        
+                    feed.download({start: 0, end: feed.length}, (e) => {
+                        if (e) {
+                            return console.log(e)
+                        }
+                        console.log('--> fetch complete')
+                        feed.close((e) => {
+                            if (e) {
+                                return console.log(e)
+                            }
+                            console.log('--> feed successfully closed')                    
+                            swarm.close()    
+                            callback()                
+                        })
+                    })                  
+                } else {
+                    console.log('--> something went wrong')
+                    feed.close((e) => {
+                        if (e) {
+                            return console.log(e)
+                        }
+                        console.log('--> feed successfully closed')                    
+                        swarm.close()    
+                        callback()                
+                    })
+                }        
+
+            }
         })        
-        console.log('--> feed length', feed.length)
-        console.log('--> readable?', feed.readable)
-        if (feed.readable) {        
-            feed.download({start: 0, end: feed.length}, (e) => {
-                if (e) {
-                    return console.log(e)
-                }
-                console.log('--> fetch complete')
-                feed.close((e) => {
-                    if (e) {
-                        return console.log(e)
-                    }
-                    console.log('--> feed successfully closed')                    
-                    swarm.close()    
-                    callback()                
-                })
-            })                  
-        } else {
-            console.log('--> something went wrong')
-        }        
     })
 
 }
 
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 module.exports = {fetch: fetch, subscribe: subscribe}
