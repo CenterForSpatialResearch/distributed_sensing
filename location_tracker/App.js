@@ -46,6 +46,8 @@ const locationSchema = {
     }
 };
 
+const LATITUDE_DELTA = 0.00922;
+const LONGITUDE_DELTA = 0.00421;
 
 type Props = {};
 export default class LocationTracker extends Component < Props > {
@@ -53,7 +55,11 @@ export default class LocationTracker extends Component < Props > {
         super(props);
         this.state = {
             location: { lat: 0, lon: 0 },
-            realm: null
+            realm: null,
+            // MapView
+            markers: [],
+            coordinates: [],
+            showsUserLocation: false
         };
     }
 
@@ -77,6 +83,36 @@ export default class LocationTracker extends Component < Props > {
             realm.deleteAll()
         });
         this.forceUpdate();
+    }
+
+    addMarker(location:Location) {
+        let marker = {
+            key: location.uuid,
+            title: location.timestamp,
+            heading: location.coords.heading,
+            coordinate: {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+            }
+        };
+
+        this.setState({
+            markers: [...this.state.markers, marker],
+            coordinates: [...this.state.coordinates, {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+            }]
+        });
+    }  
+
+    setCenter(location:Location) {
+        if (!this.refs.map) { return; }
+        this.refs.map.animateToRegion({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA
+        });
     }
 
     componentDidMount() {
@@ -130,6 +166,9 @@ export default class LocationTracker extends Component < Props > {
         coords.lon = location.coords.longitude;
         this.setState({ location: coords });
         this.addRealm(location)
+        this.addMarker(location);
+        this.setCenter(location);
+        console.log(this.state.realm.objects('Location')[0]['lat'])
     }
     onError(error) {
         console.warn('[location] ERROR -', error);
@@ -178,16 +217,35 @@ export default class LocationTracker extends Component < Props > {
                 </Header>
 
                 <MapView
-                ref="map"
-                style={styles.map}
-                showsUserLocation={this.state.showsUserLocation}
-                followsUserLocation={false}
-                scrollEnabled={true}
-                showsMyLocationButton={false}
-                showsPointsOfInterest={false}
-                showsScale={false}
-                showsTraffic={false}
-                toolbarEnabled={false}>
+                    ref="map"
+                    style={styles.map}
+                    showsUserLocation={this.state.showsUserLocation}
+                    followsUserLocation={false}
+                    scrollEnabled={true}
+                    showsMyLocationButton={false}
+                    showsPointsOfInterest={false}
+                    showsScale={false}
+                    showsTraffic={false}
+                    toolbarEnabled={false}
+                >
+                    <Polyline
+                        key="polyline"
+                        coordinates={this.state.coordinates}
+                        geodesic={true}
+                        strokeColor='rgba(0,179,253, 0.6)'
+                        strokeWidth={6}
+                        zIndex={0}
+                    />
+                    {this.state.markers.map((marker:any) => (
+                        <Marker
+                            key={marker.key}
+                            coordinate={marker.coordinate}
+                            anchor={{x:0, y:0.1}}
+                            title={marker.title}
+                        >
+                            <View style={[styles.markerIcon]}></View>
+                        </Marker>))
+                    }
                 </MapView>
 
                 <Footer style={styles.footer}>
@@ -197,8 +255,8 @@ export default class LocationTracker extends Component < Props > {
                         </Button>
                     </Left>
                     <Body style={styles.footerBody}>
-                        { /* <Text style={styles.footer}>Saved Pins: {this.state.realm ? this.state.realm.objects('Location').length : 0}</Text> */}
-                        <Text style={styles.footer}>loc: {this.state.location.lat} {this.state.location.lon}</Text>
+                        <Text style={styles.footer}>Saved Pins: {this.state.realm ? this.state.realm.objects('Location').length : 0}</Text>
+                        { /* <Text style={styles.footer}>loc: {this.state.location.lat} {this.state.location.lon}</Text> */ }
                     </Body>
                     <Right style={{flex: 0.25}}>
                         <Button rounded style={styles.icon}>
