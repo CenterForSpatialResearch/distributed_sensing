@@ -1,10 +1,5 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- * @lint-ignore-every XPLATJSCOPYRIGHT1
+ * location_tracker
  */
 
 import React from 'react';
@@ -81,6 +76,10 @@ export default class LocationTracker extends Component < Props > {
         let realm = this.state.realm;
         realm.write(() => {
             realm.deleteAll()
+        });
+        this.setState({
+            markers: [],
+            coordinates: []
         });
         this.forceUpdate();
     }
@@ -190,7 +189,6 @@ export default class LocationTracker extends Component < Props > {
             persist: true,
             samples: 1
         }, (location) => {
-            // this.setState({location:location})
             var coords = { lat: 0, lon: 0 };
             coords.lat = location.coords.latitude;
             coords.lon = location.coords.longitude;
