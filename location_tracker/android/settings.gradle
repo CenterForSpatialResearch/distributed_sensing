@@ -1,4 +1,6 @@
 rootProject.name = 'location_tracker'
+include ':nodejs-mobile-react-native'
+project(':nodejs-mobile-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/nodejs-mobile-react-native/android')
 include ':react-native-maps'
 project(':react-native-maps').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-maps/lib/android')
 include ':realm'

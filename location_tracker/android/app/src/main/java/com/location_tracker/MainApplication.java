@@ -3,6 +3,7 @@ package com.location_tracker;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.janeasystems.rn_nodejs_mobile.RNNodeJsMobilePackage;
 import com.airbnb.android.react.maps.MapsPackage;
 import io.realm.react.RealmReactPackage;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNNodeJsMobilePackage(),
             new MapsPackage(),
             new RealmReactPackage(),
             new RNBackgroundFetchPackage(),
