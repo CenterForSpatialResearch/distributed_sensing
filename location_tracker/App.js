@@ -28,6 +28,7 @@ import { Location,
          MotionActivityEvent,
          ProviderChangeEvent 
        } from "react-native-background-geolocation";
+import nodejs from 'nodejs-mobile-react-native';
 
 const locationSchema = {
     name: 'Location',
@@ -40,6 +41,7 @@ const locationSchema = {
         uuid: 'string'
     }
 };
+let init = 0
 
 const LATITUDE_DELTA = 0.00922;
 const LONGITUDE_DELTA = 0.00421;
@@ -83,6 +85,22 @@ export default class LocationTracker extends Component < Props > {
         });
         this.forceUpdate();
     }
+    getRealmObject(){
+        let realm = this.state.realm;
+        let obj = {};
+        if (init){
+            obj = realm.objects('Location')[0];
+            // let o = JSON.stringify(obj);
+            obj.type = "add"
+            console.log(obj)
+        } else{
+
+            obj.type = "init"
+            init = 1;
+            console.log(obj)
+        }
+        nodejs.channel.send(obj)
+    }
 
     addMarker(location:Location) {
         let marker = {
@@ -115,7 +133,17 @@ export default class LocationTracker extends Component < Props > {
     }
 
     componentDidMount() {
-        // Step 0:  Setup persistent storage
+		nodejs.start("main.js");
+		nodejs.channel.addListener(
+            "message",
+            (msg) => {
+        	   console.log("From node: " + msg);
+            },
+            this
+    	);
+        
+				
+				// Step 0:  Setup persistent storage
         Realm.open({
             schema: [locationSchema]
         }).then(realm => {
@@ -198,6 +226,7 @@ export default class LocationTracker extends Component < Props > {
         }, (error) => {
             console.warn('- getCurrentPosition error: ', error);
         });
+        this.getRealmObject()
     }
 
     // You must remove listeners when your component unmounts

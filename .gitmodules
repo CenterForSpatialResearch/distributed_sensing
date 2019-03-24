@@ -1,0 +1,6 @@
+[submodule "location_tracker/nodejs-assets/nodejs-project/hyperdiscovery"]
+	path = location_tracker/nodejs-assets/nodejs-project/hyperdiscovery
+	url = https://github.com/karissa/hyperdiscovery
+[submodule "location_tracker/nodejs-assets/nodejs-project/hypercore"]
+	path = location_tracker/nodejs-assets/nodejs-project/hypercore
+	url = https://github.com/mafintosh/hypercore/

@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "native-base": "^2.12.1",
-    "react": "16.6.3",
+    "nodejs-mobile-react-native": "^0.3.4",
+    "react": "^16.8.3",
     "react-native": "^0.59.1",
     "react-native-background-geolocation": "^3.0.0-beta.4",
     "react-native-maps": "^0.23.0",
