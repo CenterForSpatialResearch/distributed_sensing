@@ -12,12 +12,16 @@ const send = (msg) => {
 	rn_bridge.channel.send(msg)
 }
 const initialize = () => {
-		feed = hypercore('./tmp', {valueEncoding: 'json'})
-		feed.on("ready", function(){
-			send(feed.key.toString("hex"))
+
+    feed = hypercore(rn_bridge.app.datadir(), {valueEncoding: 'json'})
+      feed.on("ready", function(){
+			send("key: "+ feed.key.toString("hex"))
 			swarm = hyperdiscovery(feed)
 			swarm.on("connection", function(peer, type){
 				send("We have a connection")
+            peer.on('close', function () {
+              send('peer disconnected')
+            })
 			})
 		})
 		return
@@ -27,13 +31,6 @@ const addFeed = (msg) => {
 	feed.append(msg)
 	let string = 'Appended block, ' + feed.length+ '%d in total '+feed.byteLength+'(%d bytes)\n'
 	rn_bridge.channel.send(string);
-
-	// feed.flush(function () {
-	//   // console.log('Appended 3 more blocks, %d in total (%d bytes)\n', feed.length, feed.byteLength)
-	//   // feed.createReadStream()
-	//   //   .on('data', console.log)
-	//   //   .on('end', console.log.bind(console, '\n(end)'))
-	// })
 }
 // Echo every message received from react-native.
 rn_bridge.channel.on('message', (msg) => {
@@ -45,7 +42,7 @@ rn_bridge.channel.on('message', (msg) => {
     		break;
       case 'add':
       	addFeed(msg);
-        rn_bridge.channel.send("Attemp to add "+ msg.uuid + " to hypercore");
+        rn_bridge.channel.send("Attempt to add "+ msg.uuid + " to hypercore");
         break;
       default:
         rn_bridge.channel.send(

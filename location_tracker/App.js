@@ -38,7 +38,8 @@ const locationSchema = {
         is_moving: 'bool',
         lat: 'float',
         lon: 'float',
-        uuid: 'string'
+        uuid: 'string',
+        index: 'int'
     }
 };
 let init = 0
@@ -53,6 +54,7 @@ export default class LocationTracker extends Component < Props > {
         this.state = {
             location: { lat: 0, lon: 0 },
             realm: null,
+            index: 0,
             // MapView
             markers: [],
             coordinates: [],
@@ -69,7 +71,8 @@ export default class LocationTracker extends Component < Props > {
             is_moving: location.is_moving,
             lat: location.coords.latitude,
             lon: location.coords.longitude,
-            uuid: location.uuid
+            uuid: location.uuid,
+            index: 0
           });
         });
     }
@@ -85,11 +88,14 @@ export default class LocationTracker extends Component < Props > {
         });
         this.forceUpdate();
     }
-    getRealmObject(){
+    addHC(location){
         let realm = this.state.realm;
+        // console.log(realm.objects('Location').filtered('index > $0', this.state.index))
+        // this.state.index+=1;
         let obj = {};
         if (init){
-            obj = realm.objects('Location')[0];
+            // obj = realm.objects('Location')[0];
+            obj = location
             // let o = JSON.stringify(obj);
             obj.type = "add"
             console.log(obj)
@@ -99,6 +105,7 @@ export default class LocationTracker extends Component < Props > {
             init = 1;
             console.log(obj)
         }
+        console.log(JSON.stringify(obj))
         nodejs.channel.send(obj)
     }
 
@@ -192,9 +199,10 @@ export default class LocationTracker extends Component < Props > {
         coords.lat = location.coords.latitude;
         coords.lon = location.coords.longitude;
         this.setState({ location: coords });
-        this.addRealm(location)
+        this.addRealm(location);
         this.addMarker(location);
         this.setCenter(location);
+        this.addHC(location);
         console.log(this.state.realm.objects('Location')[0]['lat'])
     }
     onError(error) {
@@ -226,7 +234,6 @@ export default class LocationTracker extends Component < Props > {
         }, (error) => {
             console.warn('- getCurrentPosition error: ', error);
         });
-        this.getRealmObject()
     }
 
     // You must remove listeners when your component unmounts
