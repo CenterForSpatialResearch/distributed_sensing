@@ -39,7 +39,6 @@ const locationSchema = {
         lat: 'float',
         lon: 'float',
         uuid: 'string',
-        index: 'int'
     }
 };
 let init = 0
@@ -54,7 +53,6 @@ export default class LocationTracker extends Component < Props > {
         this.state = {
             location: { lat: 0, lon: 0 },
             realm: null,
-            index: 0,
             // MapView
             markers: [],
             coordinates: [],
@@ -71,8 +69,7 @@ export default class LocationTracker extends Component < Props > {
             is_moving: location.is_moving,
             lat: location.coords.latitude,
             lon: location.coords.longitude,
-            uuid: location.uuid,
-            index: 0
+            uuid: location.uuid
           });
         });
     }
