@@ -1,15 +1,28 @@
 # HYFA.net
 
-<p>
-    <b>Hy</b>percore <b>F</b>eed <b>A</b>ggregator Network is a peer-to-peer system for securely sharing data from sensors. It allows you to stream data from a device like a mobile phone (such as geolocation) or ... a mobile 
-</p>
-<p>
-    The first HYFA app for mobile devices will be a location tracker.
+**Hy**percore **F**eed **A**ggregator Network is a peer-to-peer system for securely sharing data from sensors. Stream geolocation data from your mobile phone to your laptop, for example, or get updates from a network of water quality monitors, all without setting up a server.
 
-    It consists of apps for mobile devices, daemons for embedded Raspberry Pi-like computers, and an aggregator desktop application to view, replicate, and transfer data without a central server.
-</p>
-<p>
- HYFA uses <a href="https://github.com/mafintosh/hypercore">hypercore</a>, the logging system that powers <a href="https://datproject.org">DAT</a>, but it does not use DAT's more advanced file-management features. Instead, it deploys hypercore directly as an unalterable live feed of sensor readings.
-</p>
+HyFA uses [hypercore](https://github.com/mafintosh/hypercore), the logging system that powers [DAT](https://datproject.org), but it does not use DAT's more advanced file-management features. Instead, it deploys hypercore directly as an unalterable live feed of sensor readings.
 
-## Works <a name="works"></a>
+Receive release announcements: <input type="text" name="ok" />
+
+---
+
+### Alpha
+
+Release 0.1.0 coming soon
+
+Subscribers:  
+• HyFA for macOS
+
+Publishers:  
+• Location tracker for iOS and Android  
+• Daemon for Raspberry Pi
+
+HyFA on [Github](http://github.com/CenterForSpatialResearch/distributed_sensing/)
+
+
+---
+
+### Support
+

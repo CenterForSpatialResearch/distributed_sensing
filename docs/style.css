@@ -16,8 +16,9 @@ body {
     font-weight: 300;   
     color: black;
     background-color: white;
-    /*background: linear-gradient(to bottom, #00a1ce 0%,#00a1ce 16%,#5e244d 48%,#5e244d 67%,#00a1ce 95%);  
-                       */
+    background: linear-gradient(to bottom, #00a1ce 0%,#00a1ce 16%,#5e244d 48%,#5e244d 67%,#00a1ce 95%);  
+                       
+    /*background-image: url('background.png');*/
     font-weight: 300;
     font-size: 18px;                       
 }
@@ -45,7 +46,13 @@ div#container {
     margin-bottom: 20px;
     margin-top: 20px;
     background-color: white;
+    /*opacity: .5;*/
     font-weight: 300;       
+    padding-top: 1px;
+    padding-left: 30px;
+    padding-right: 30px;
+    /*background-image: url('background.png');*/
+    
 }
 
 div#footer {
@@ -56,21 +63,32 @@ div#footer {
     padding: 15px;
 }
 
-@media screen and (min-width: 900px) {
+/*@media screen and (min-width: 900px) {
 
     div#container {
         padding: 30px;
     }
 
 }
-
+*/
 
 h1, h2, h3, h4, h5 {
     font-family: 'Overpass Mono', monospace;
     font-weight: normal;
-    margin-bottom: 30px;
 }
 
+h3, h4, h5 {
+    /*margin: 0px;*/
+    /*margin-top: 20px;*/
+    /*margin-bottom: 5px;*/
+    /*padding: 0px;*/
+}
+
+/*p {
+    margin-top: 0px;
+    padding-top: 0px;
+}
+*/
 a {
     color: #00a;
     text-decoration: underline;
@@ -79,7 +97,7 @@ a {
     
     a:hover { color: #44f; }
 
-b {
+strong {
     font-weight: 800;
     color: #f00;
 }
