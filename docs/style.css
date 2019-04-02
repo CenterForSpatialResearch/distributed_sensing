@@ -12,7 +12,8 @@ div {
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Overpass', sans-serif;    
+    font-family: 'Overpass', sans-serif; 
+    font-weight: 300;   
     color: black;
     background-color: white;
     /*background: linear-gradient(to bottom, #00a1ce 0%,#00a1ce 16%,#5e244d 48%,#5e244d 67%,#00a1ce 95%);  
@@ -38,11 +39,13 @@ div#header {
 div#container {
     position: relative;
     margin: auto;
-    max-width: 1024px;
+    /*max-width: 1024px;*/
+    max-width: 600px;
     z-index: 10;    
     margin-bottom: 20px;
     margin-top: 20px;
     background-color: white;
+    font-weight: 300;       
 }
 
 div#footer {
@@ -75,6 +78,11 @@ a {
 }
     
     a:hover { color: #44f; }
+
+b {
+    font-weight: 800;
+    color: #f00;
+}
 
 ul {
     list-style-type: disc;
