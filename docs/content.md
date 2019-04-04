@@ -19,7 +19,7 @@ Publishers:
 • Location tracker for iOS and Android  
 • Daemon for Raspberry Pi
 
-HyFA on [Github](http://github.com/CenterForSpatialResearch/distributed_sensing/)
+HyFA on [Github](http://github.com/CenterForSpatialResearch/distributed_sensing/).
 
 
 ---
