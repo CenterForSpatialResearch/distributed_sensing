@@ -81,7 +81,7 @@ export default class LocationTracker extends Component <Props> {
     addRealm(location) {
       let realm = this.state.realm;
         realm.write(()=>{
-          realm.create('Location',{
+          realm.create('Location', {
             time: location.timestamp,
             odometer: location.odometer,
             is_moving: location.is_moving,
@@ -94,6 +94,8 @@ export default class LocationTracker extends Component <Props> {
 
     clearRealm() {
         let realm = this.state.realm;
+        console.log(realm.objects('Location')[0]['time'])
+        console.log(realm.objects('Location')[1]['time'])
         realm.write(() => {
             realm.deleteAll()
         });
@@ -338,7 +340,7 @@ export default class LocationTracker extends Component <Props> {
 
 
                 <ShareSheet visible={this.state.shareVisible} onCancel={this.onCancel.bind(this)}>
-
+                    {/*
                     <ShareButton 
                         iconSrc={{ uri: EMAIL_ICON }}
                         onPress={()=>{
@@ -351,6 +353,7 @@ export default class LocationTracker extends Component <Props> {
                         }}>
                         Email
                     </ShareButton>
+                    */}
 
                     <ShareButton
                         iconSrc={{ uri: CLIPBOARD_ICON }}
