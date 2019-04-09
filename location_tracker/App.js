@@ -23,8 +23,7 @@ import { Container,
 
 import Realm from 'realm';
 
-import MapView from 'react-native-maps';
-import { Marker, Polyline } from 'react-native-maps';
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import BackgroundGeolocation from "react-native-background-geolocation";
 import { Location,
@@ -36,6 +35,8 @@ import { Location,
 import nodejs from 'nodejs-mobile-react-native';
 
 import Share, { ShareSheet, Button as ShareButton } from 'react-native-share';
+
+MapboxGL.setAccessToken('pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ');
 
 const locationSchema = {
     name: 'Location',
@@ -67,6 +68,7 @@ export default class LocationTracker extends Component <Props> {
     constructor(props) {
         super(props);
         this.state = {
+            enable: true,
             location: { lat: 0, lon: 0 },
             realm: null,
             // MapView
@@ -140,21 +142,35 @@ export default class LocationTracker extends Component <Props> {
 
         this.setState({
             markers: [...this.state.markers, marker],
-            coordinates: [...this.state.coordinates, {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude
-            }]
+            coordinates: [...this.state.coordinates, 
+                [ location.coords.longitude, location.coords.latitude ]
+            ]
         });
     }  
 
-    setCenter(location:Location) {
-        if (!this.refs.map) { return; }
-        this.refs.map.animateToRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA
-        });
+    renderAnnotation(counter) {
+        const id = `pointAnnotation${counter}`;
+        const coordinate = this.state.coordinates[counter];
+        const title = `Longitude: ${this.state.coordinates[counter][1]} Latitude: ${this.state.coordinates[counter][0]}`;
+
+        return (
+            <MapboxGL.PointAnnotation
+                key={id}
+                id={id}
+                title='Test'
+                coordinate={coordinate}>
+            </MapboxGL.PointAnnotation>
+        );
+    }
+
+    renderAnnotations() {
+        console.log('here is the problematic lat')
+        console.log(this.state.coordinates[0])
+        const items = [];
+        for (let i = 0; i < this.state.coordinates.length; i++) {
+          items.push(this.renderAnnotation(i));
+        }
+        return items;
     }
 
     componentDidMount() {
@@ -188,6 +204,7 @@ export default class LocationTracker extends Component <Props> {
 
         // Step 2:  Execute Ready Method
         BackgroundGeolocation.ready({
+            enabled: true,
             // Geolocation Config
             desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
             distanceFilter: 10,
@@ -223,9 +240,7 @@ export default class LocationTracker extends Component <Props> {
         this.setState({ location: coords });
         this.addRealm(location);
         this.addMarker(location);
-        this.setCenter(location);
         this.addHC(location);
-        console.log(this.state.realm.objects('Location')[0]['lat'])
     }
     onError(error) {
         console.warn('[location] ERROR -', error);
@@ -289,37 +304,15 @@ export default class LocationTracker extends Component <Props> {
                     </Right>
                 </Header>
 
-                <MapView
-                    ref="map"
-                    style={styles.map}
-                    showsUserLocation={this.state.showsUserLocation}
-                    followsUserLocation={false}
-                    scrollEnabled={true}
-                    showsMyLocationButton={false}
-                    showsPointsOfInterest={false}
-                    showsScale={false}
-                    showsTraffic={false}
-                    toolbarEnabled={false}
-                >
-                    <Polyline
-                        key="polyline"
-                        coordinates={this.state.coordinates}
-                        geodesic={true}
-                        strokeColor='rgba(0,179,253, 0.6)'
-                        strokeWidth={6}
-                        zIndex={0}
-                    />
-                    {this.state.markers.map((marker:any) => (
-                        <Marker
-                            key={marker.key}
-                            coordinate={marker.coordinate}
-                            anchor={{x:0, y:0.1}}
-                            title={marker.title}
-                        >
-                            <View style={[styles.markerIcon]}></View>
-                        </Marker>))
-                    }
-                </MapView>
+                <MapboxGL.MapView
+                    ref={(c) => this._map = c}
+                    style={{flex: 1}}
+                    zoomLevel={11}
+                    showUserLocation={true}
+                    userTrackingMode={1}
+                    centerCoordinate={this.state.coordinates[this.state.coordinates.length-1]}
+                    >{this.renderAnnotations()}
+                </MapboxGL.MapView>
 
                 <Footer style={styles.footer}>
                     <Left style={{flex:0.25}}>
