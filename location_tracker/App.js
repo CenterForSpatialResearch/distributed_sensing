@@ -7,8 +7,7 @@ import { Component } from 'react';
 
 import { StyleSheet, 
          View,
-         Clipboard,
-         Alert
+         Share
        } from 'react-native';
 
 import { Container,
@@ -32,8 +31,6 @@ import { Location,
 
 import nodejs from 'nodejs-mobile-react-native';
 
-import Share, { ShareSheet, Button as ShareButton } from 'react-native-share';
-
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 MapboxGL.setAccessToken('pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ');
 
@@ -50,14 +47,8 @@ const locationSchema = {
 };
 
 let isDatInit = 0
-
-const EMAIL_ICON = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAMAAAANIilAAAABC1BMVEUAAAA/Pz8/Pz9AQEA/Pz8/Pz8+Pj4+Pj4/Pz8/Pz8/Pz8/Pz8+Pj4+Pj4/Pz8/Pz8/Pz9AQEA+Pj5AQEA/Pz87Ozs7Ozs/Pz8+Pj47OztAQEA/Pz89PT01NTVBQUFBQUE/Pz8/Pz8+Pj4/Pz9BQUE+Pj4/Pz8/Pz89PT0+Pj4/Pz9BQUFAQEA9PT09PT0/Pz87Ozs9PT05OTk/Pz8+Pj4/Pz9AQEA/Pz8/Pz8/Pz8/Pz+AgIA+Pj4/Pz8/Pz9AQEA/Pz8/Pz8/Pz8/Pz8+Pj4/Pz8/Pz8/Pz9AQEA+Pj4/Pz8+Pj4/Pz85OTk/Pz8/Pz8/Pz8/Pz88PDw9PT0/Pz88PDw8PDw+Pj45OTlktUJVAAAAWXRSTlMA/7N4w+lCWvSx8etGX/XlnmRO7+1KY/fjOGj44DU7UvndMec/VvLbLj7YKyiJdu9O7jZ6Um1w7DnzWQJz+tpE6uY9t8D9QehAOt7PVRt5q6duEVDwSEysSPRjqHMAAAEfSURBVEjH7ZTXUgIxGEa/TwURUFyKYgMURLCvbe2gYAV7ff8nMRksgEDiKl7lXOxM5p8zO3s2CWAwGAx/CjXontzT25Y+pezxtpv2+xTygJ+BYOvh4BBDwx1lKxxhNNZqNjLK+JjVWUYsykj4+2h8gpNTUMkIBuhPNE+SKU7PQC3D62E60ziYzXIuBx0Z+XRTc9F5fgF6MhKNzWXnRejKWGJdc9GZy8AP3kyurH52Ju01XTkjvnldNN+Qi03RecthfFtPlrXz8rmzi739Ax7mUCjy6FhH/vjPonmqVD6pdT718excLX/tsItLeRAqtc7VLIsFlVy/t6+ub27v7t8XD490niy3p+rZpv3i+jy/Or+5SUrdvcNcywaDwfD/vAF2TBl+G6XvQwAAAABJRU5ErkJggg==";
-const CLIPBOARD_ICON = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAMAAAANIilAAAAB5lBMVEUAAAA8PDw+Pj4/Pz8/Pz8/Pz8/Pz8+Pj47OzsAAAA5OTk+Pj4/Pz8/Pz8+Pj49PT0/Pz8/Pz85OTlAQEA/Pz87Ozs+Pj4+Pj4/Pz8/Pz8/Pz8zMzNBQUE/Pz8/Pz8/Pz9AQEA7Ozs9PT0/Pz9AQEA+Pj4/Pz8+Pj4AAABAQEA/Pz87OztBQUE/Pz8+Pj4zMzNDQ0M/Pz89PT03Nzc/Pz8/Pz8/Pz8/Pz88PDw8PDwAAABCQkI7Ozs9PT0/Pz9AQEA/Pz8uLi4rKytAQEA/Pz89PT0+Pj4/Pz8/Pz8/Pz9CQkJAQEA/Pz9CQkI/Pz8/Pz8/Pz8+Pj49PT0/Pz8yMjI/Pz88PDw/Pz9BQUE8PDw/Pz9AQEA/Pz8/Pz8/Pz89PT0/Pz9CQkI9PT1EREQ9PT08PDw4ODg+Pj6AgIA/Pz8/Pz82NjZVVVU7Ozs/Pz81NTVAQEA/Pz8+Pj49PT1BQUE/Pz8/Pz8/Pz8vLy8/Pz87OztAQEA3Nzc9PT0+Pj4/Pz89PT0/Pz8/Pz89PT1AQEA9PT04ODgzMzM/Pz8/Pz9AQEA/Pz9AQEA/Pz83Nzc9PT0/Pz9AQEA/Pz8+Pj4+Pj5AQEA/Pz89PT1FRUU5OTk/Pz8/Pz8+Pj47Ozs/Pz89PT08PDw+Pj6z1Mg0AAAAonRSTlMAEXTG8/7pslICKMn//J0u2LcSLNu9Y0523KoKL9b7hggauZsEOuJ/ARS7VifkiwUX0bEq1f1p6KGQAz4NpnpY8AsGtMIyb46NbSOMcRuh+fGTFc0z1yKFKy/dpKff1CqKMoYPp+lAgAKd6kIDhdorJJExNjflktMr3nkQDoXbvaCe2d2EijIUn3JsbjDDF1jjOOdWvIDhmhoJfWrAK7bYnMgx8fGWAAACNUlEQVRIx+2W6V8SURSGBxEVeydMbVER1DCwRNTCEhMNsywqExXcUrNVU9NK2wy1fd9sMyvrP+1cmYH5eK5f5f3APef85hnuvfPeM6MoaaW1dWXKMGdasrJzrJtgc7dhQ+p2kzRry4OuHfmSbEEhUTt37d5TRGNxiRRrLwUczjKKyiuI3uuSYCv3ARa3ZyOu2k/xAT5b7aXra3xaVlsH1LPZg4cAvzM10wbgMBs+QqtsDKTyJroXGz7a7AgandECtPLXfKzFY8hCbcBxFudpP3Gy49RpQ8UXtgBnOOzZc53CU+e7Ism7uYnt5ji0p1e3pDmqzTnmAEr7GGz/AGEDg0MXaBgeERXrKIWFBQz2IvlYHbtEh/EycOUqVQLXVCDPxvGz+MPYdRGWjE/coGFyyg9M32SwM8PkydlQIim7JX6DxHpvM9g7c+SjoLESmqd9vjvDYO9NEzs1aahYY7SK+3Zm31Ddmp8jDx4qysIj2qt4O6dviH4xqvk5soj40vJjqjzh7HOf6BtPtb1SnulG6X3O6bHdqb5BejHbKtDOl+UcQ78iNuwzFKKvwx1v3npYJ+kd0BYynqz3Eu2OZvnB+IyCRVE+TD5qSmWBRuDjJzb8GWhIJq4xv36kWKoH6mr1vlFDnvRW86e9Qtd/qUrs1VeKv1VKbJjrOz3Wih8UrTpF37ArMlotFmfg58raLxrjvyXfifl/ku/TdZsiK9NfNcH+y93Ed4A1JzvLkmnOMClppbV19R+iQFSQ2tNASwAAAABJRU5ErkJggg==";
 let shareOptions = {
-    title: "share your dat public key",
-    message: "here's my dat public key",
-    key: null,
-    subject: "here's my dat public key" //  for email
+    message: null,
 };
 
 type Props = {};
@@ -65,12 +56,10 @@ export default class LocationTracker extends Component <Props> {
     constructor(props) {
         super(props);
         this.state = {
-            enabled: true,
+            enabled: false,
             location: { lat: 0, lon: 0 },
             realm: null,
-            // MapBox
             coordinates: [],
-            // Share
             shareVisible: false
         };
     }
@@ -97,7 +86,6 @@ export default class LocationTracker extends Component <Props> {
             realm.deleteAll()
         });
         this.setState({
-            markers: [],
             coordinates: []
         });
         this.forceUpdate();
@@ -106,29 +94,24 @@ export default class LocationTracker extends Component <Props> {
     addToDat(location){
         let obj = {};
         if (isDatInit){
-            obj = location
-            obj.type = "add"
+            obj = location;
+            obj.type = "add";
         } else{
             isDatInit = 1;
-            obj.type = "init"
+            obj.type = "init";
         }
         console.log(JSON.stringify(obj))
         nodejs.channel.send(obj)
     }
 
-    getFromDat(location){
+    // this needs work
+    getFromDat(){
         let obj = {};
-        if (isDatInit){
-            obj = location
-            obj.type = "add"
-        } else{
-            isDatInit = 1;
-            obj.type = "init"
-        }
-        console.log(JSON.stringify(obj))
-        nodejs.channel.send(obj)
+        obj.type = "get";
+        nodejs.channel.send(obj);
     }
 
+    // ultimately delete this
     addMarker(location:Location) {
         this.setState({
             coordinates: [...this.state.coordinates, 
@@ -152,57 +135,53 @@ export default class LocationTracker extends Component <Props> {
     }
 
     renderMarkers() {
-        console.log('here is the problematic lat')
-        console.log(this.state.coordinates[0])
         const items = [];
         for (let i = 0; i < this.state.coordinates.length; i++) {
-          items.push(this.renderMarker(i));
+            items.push(this.renderMarker(i));
         }
         return items;
     }
 
     componentDidMount() {
+        // Initialize feed/swarm
 		nodejs.start("main.js");
 		nodejs.channel.addListener(
             "message",
             (msg) => {
                 console.log("From node: " + msg);
-                if(msg.substring(0, 5) == "key: "){
-                    shareOptions.key = msg.substring(5);
-                    console.log(shareOptions.key);
+                // store the DAT public key for sharing
+                if(msg.substring(0, 5) == "key: "){ 
+                    shareOptions.message = msg.substring(5);
+                    console.log(shareOptions.url)
                 }
             },
             this
     	);
         
 				
-				// Step 0:  Setup persistent storage
+		// Setup persistent storage
         Realm.open({
             schema: [locationSchema]
         }).then(realm => {
             this.setState({ realm });
         });
 
-        // Step 1:  Listen to events:
+        // Listen to location events:
         BackgroundGeolocation.onLocation(this.onLocation.bind(this), this.onError);
         BackgroundGeolocation.onMotionChange(this.onMotionChange.bind(this));
         BackgroundGeolocation.onActivityChange(this.onActivityChange.bind(this));
         BackgroundGeolocation.onProviderChange(this.onProviderChange.bind(this));
         BackgroundGeolocation.onPowerSaveChange(this.onPowerSaveChange.bind(this));
 
-        // Step 2:  Configure Background Geolocation
+        // Configure Background Geolocation
         BackgroundGeolocation.configure({
-            enabled: false,
-            // Geolocation Config
             desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
             distanceFilter: 10,
-            // Activity Recognition
             stopTimeout: 1,
-            // Application config
-            debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
+            debug: false, 
             logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-            stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
-            startOnBoot: true // <-- Auto start tracking when device is powered-up.
+            stopOnTerminate: false,
+            startOnBoot: true 
         }, (state) => {
             console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
             this.setState({
@@ -217,9 +196,9 @@ export default class LocationTracker extends Component <Props> {
         coords.lat = location.coords.latitude;
         coords.lon = location.coords.longitude;
         this.setState({ location: coords });
-        this.addRealm(location);
-        this.addMarker(location);
-        this.addHC(location);
+        this.addRealm(location);    // ultimately delete this
+        this.addMarker(location);   // ultimately delete this
+        this.addToDat(location);
     }
     onError(error) {
         console.warn('[location] ERROR -', error);
@@ -236,21 +215,7 @@ export default class LocationTracker extends Component <Props> {
     onPowerSaveChange(isPowerSaveMode:boolean) {
         console.log('[event] powersavechange', isPowerSaveMode);
     } 
-    onClickGetCurrentPosition() {
-        BackgroundGeolocation.getCurrentPosition({
-            persist: true,
-            samples: 1
-        }, (location) => {
-            var coords = { lat: 0, lon: 0 };
-            coords.lat = location.coords.latitude;
-            coords.lon = location.coords.longitude;
-            this.setState({ location: coords });
-            console.log(coords)
-            console.log(this.state.realm)
-        }, (error) => {
-            console.warn('- getCurrentPosition error: ', error);
-        });
-    }
+
     onToggleEnabled() {
         let enabled = !this.state.enabled;
         this.setState({
@@ -263,20 +228,20 @@ export default class LocationTracker extends Component <Props> {
         }
     }
 
+    onCenterMap () {
+        // need to figure out how to re-center map
+    }
+
+    sharePublicKey = () => {
+        Share.share(shareOptions)
+        .then(result => console.log(result))
+        .catch(error => console.log(error));
+    }
+
     // You must remove listeners when your component unmounts
     componentWillUnmount() {
         BackgroundGeolocation.removeListeners();
     }
-
-    onCancel() {
-        console.log("CANCEL")
-        this.setState({shareVisible:false});
-    }
-    onOpen() {
-        console.log("OPEN")
-        this.setState({shareVisible:true});
-    }
-
 
     render() {
         return (
@@ -290,7 +255,7 @@ export default class LocationTracker extends Component <Props> {
                     </Body>
                     <Right style={{flex: 0.25}}>
                         <Button rounded style={styles.icon}>
-                            <Icon active name="ios-share" style={styles.icon} onPress={ this.onOpen.bind(this)} />
+                            <Icon active name="ios-share" style={styles.icon} onPress={ this.sharePublicKey } />
                         </Button>
                     </Right>
                 </Header>
@@ -307,7 +272,7 @@ export default class LocationTracker extends Component <Props> {
                 <Footer style={styles.footer}>
                     <Left style={{flex:0.25}}>
                         <Button rounded style={styles.icon}>
-                            <Icon active name="md-navigate" style={styles.icon} onPress={this.onClickGetCurrentPosition.bind(this)} />
+                            <Icon active name="md-navigate" style={styles.icon} onPress={ this.onCenterMap.bind(this) } />
                         </Button>
                     </Left>
                     <Body style={styles.footerBody}>
@@ -319,40 +284,6 @@ export default class LocationTracker extends Component <Props> {
                         </Button>
                     </Right>
                 </Footer>
-
-
-                <ShareSheet visible={this.state.shareVisible} onCancel={this.onCancel.bind(this)}>
-                    {/*
-                    <ShareButton 
-                        iconSrc={{ uri: EMAIL_ICON }}
-                        onPress={()=>{
-                            this.onCancel();
-                            setTimeout(() => {
-                                Share.shareSingle(Object.assign(shareOptions, {
-                                    "social": "email"
-                                }));
-                            }, 300);
-                        }}>
-                        Email
-                    </ShareButton>
-                    */}
-
-                    <ShareButton
-                        iconSrc={{ uri: CLIPBOARD_ICON }}
-                        onPress={()=>{
-                            this.onCancel();
-                            setTimeout(() => {
-                                if(typeof shareOptions["url"] !== undefined) {
-                                    Clipboard.setString(shareOptions["key"]);
-                                    Alert.alert('dat public key copied to clipboard');
-                                }
-                            }, 300);
-                        }}>
-                        Copy Link
-                    </ShareButton>
-
-                </ShareSheet>
-
             </Container>
         );
     }
