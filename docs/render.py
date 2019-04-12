@@ -2,9 +2,15 @@
 
 import markdown, os
 
+
+with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "mailchimp.html"))) as f:
+    signup = f.read()
+
 with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "content.md"))) as f:
     content = f.read().strip()
     content = markdown.markdown(content, extensions=['extra'])
+    content = content.replace("SIGNUP", signup)
+
 
 with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "template.html"))) as f:
     template = f.read()

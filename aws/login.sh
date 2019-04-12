@@ -1,1 +1,0 @@
-ssh -i server/bhec2.pem ubuntu@54.208.219.156

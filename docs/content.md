@@ -1,9 +1,29 @@
-# Title
+# HyFA.net
 
-##### [Works](#works), [Bio](#bio), [Contacto](#contacto)
+**Hy**percore **F**eed **A**ggregator Network is a peer-to-peer system for securely sharing data from sensors. Stream geolocation data from your mobile phone to your laptop, for example, or get updates from a network of water quality monitors, all without setting up a server.
 
-## Works <a name="works"></a>
+HyFA uses [hypercore](https://github.com/mafintosh/hypercore), the logging system that powers [DAT](https://datproject.org), but it does not use DAT's more advanced file-management features. Instead, it deploys hypercore directly as an unalterable live feed of sensor readings.
 
-location data is just one aspect of data collection, but it can be a particularly problematic one given that where you live can readily serve as a proxy for race and class. so this becomes a sort of “soft” redlining, where certain groups of people are exposed to certain kinds of information and opportunities, based on location.
+SIGNUP
 
-## Works <a name="works"></a>
+---
+
+### Alpha
+
+Release 0.1.0 coming soon
+
+Subscribers:  
+• HyFA for macOS
+
+Publishers:  
+• Location tracker for iOS and Android  
+• Daemon for Raspberry Pi
+
+HyFA on [Github](http://github.com/CenterForSpatialResearch/hyfa).
+
+
+---
+
+### Support
+
+HyFA is a project of the [Center for Spatial Research](http://c4sr.columbia.edu).
