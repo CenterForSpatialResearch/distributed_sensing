@@ -12,6 +12,7 @@ div {
 body {
     margin: 0;
     padding: 0;
+
     font-family: 'Overpass', sans-serif; 
     font-weight: 300;   
     color: black;
@@ -29,6 +30,7 @@ div#background {
     height: 100%;
     background-color: white;
     background: rgba(235, 250, 255, 0.8);
+
 }
 
 div#header {
@@ -42,6 +44,7 @@ div#header {
 div#container {
     position: relative;
     margin: auto;
+
     max-width: 600px;
     z-index: 10;    
     margin-bottom: 100px;
@@ -54,6 +57,7 @@ div#container {
     border: 1px solid #ccc;
     background-color: white;
     /*background: rgba(255, 255, 255, 0.8);    */
+
 }
 
 div#footer {
@@ -64,6 +68,7 @@ div#footer {
     padding: 15px;
 }
 
+
 h1, h2, h3, h4, h5 {
     font-family: 'Overpass Mono', monospace;
     font-weight: normal;
@@ -71,6 +76,7 @@ h1, h2, h3, h4, h5 {
 
 a {
     color: #000;
+
     text-decoration: underline;
     transition: 0.25s;
 }
@@ -81,6 +87,7 @@ strong {
     font-weight: 600;
     color: #44f;
 }
+
 
 ul {
     list-style-type: disc;

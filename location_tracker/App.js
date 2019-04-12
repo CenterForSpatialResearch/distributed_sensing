@@ -5,22 +5,22 @@
 import React from 'react';
 import { Component } from 'react';
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, 
+         View,
+         Share
+       } from 'react-native';
 
 import { Container,
          Icon,
          Text,
          Button,
-         Header, Footer, Title,
          Content,
+         Header, Footer, Title,
          Left, Body, Right,
          Switch 
        } from 'native-base';
 
 import Realm from 'realm';
-
-import MapView from 'react-native-maps';
-import { Marker, Polyline } from 'react-native-maps';
 
 import BackgroundGeolocation from "react-native-background-geolocation";
 import { Location,
@@ -28,6 +28,11 @@ import { Location,
          MotionActivityEvent,
          ProviderChangeEvent 
        } from "react-native-background-geolocation";
+
+import nodejs from 'nodejs-mobile-react-native';
+
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
+MapboxGL.setAccessToken('pk.eyJ1IjoiYnJpYW5ob3VzZSIsImEiOiJXcER4MEl3In0.5EayMxFZ4h8v4_UGP20MjQ');
 
 const locationSchema = {
     name: 'Location',
@@ -37,31 +42,32 @@ const locationSchema = {
         is_moving: 'bool',
         lat: 'float',
         lon: 'float',
-        uuid: 'string'
+        uuid: 'string',
     }
 };
 
-const LATITUDE_DELTA = 0.00922;
-const LONGITUDE_DELTA = 0.00421;
+let isDatInit = 0
+let shareOptions = {
+    message: null,
+};
 
 type Props = {};
-export default class LocationTracker extends Component < Props > {
+export default class LocationTracker extends Component <Props> {
     constructor(props) {
         super(props);
         this.state = {
+            enabled: false,
             location: { lat: 0, lon: 0 },
             realm: null,
-            // MapView
-            markers: [],
             coordinates: [],
-            showsUserLocation: false
+            shareVisible: false
         };
     }
 
     addRealm(location) {
       let realm = this.state.realm;
         realm.write(()=>{
-          realm.create('Location',{
+          realm.create('Location', {
             time: location.timestamp,
             odometer: location.odometer,
             is_moving: location.is_moving,
@@ -74,87 +80,113 @@ export default class LocationTracker extends Component < Props > {
 
     clearRealm() {
         let realm = this.state.realm;
+        console.log(realm.objects('Location')[0]['time'])
+        console.log(realm.objects('Location')[1]['time'])
         realm.write(() => {
             realm.deleteAll()
         });
         this.setState({
-            markers: [],
             coordinates: []
         });
         this.forceUpdate();
     }
 
-    addMarker(location:Location) {
-        let marker = {
-            key: location.uuid,
-            title: location.timestamp,
-            heading: location.coords.heading,
-            coordinate: {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude
-            }
-        };
+    addToDat(location){
+        let obj = {};
+        if (isDatInit){
+            obj = location;
+            obj.type = "add";
+        } else{
+            isDatInit = 1;
+            obj.type = "init";
+        }
+        console.log(JSON.stringify(obj))
+        nodejs.channel.send(obj)
+    }
 
+    // this needs work
+    getFromDat(){
+        let obj = {};
+        obj.type = "get";
+        nodejs.channel.send(obj);
+    }
+
+    // ultimately delete this
+    addMarker(location:Location) {
         this.setState({
-            markers: [...this.state.markers, marker],
-            coordinates: [...this.state.coordinates, {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude
-            }]
+            coordinates: [...this.state.coordinates, 
+                [ location.coords.longitude, location.coords.latitude ]
+            ]
         });
     }  
 
-    setCenter(location:Location) {
-        if (!this.refs.map) { return; }
-        this.refs.map.animateToRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA
-        });
+    renderMarker(counter) {
+        const id = `pointAnnotation${counter}`;
+        const coordinate = this.state.coordinates[counter];
+        const title = `Longitude: ${this.state.coordinates[counter][1]} Latitude: ${this.state.coordinates[counter][0]}`;
+        return (
+            <MapboxGL.PointAnnotation
+                key={id}
+                id={id}
+                title='Test'
+                coordinate={coordinate}>
+            </MapboxGL.PointAnnotation>
+        );
+    }
+
+    renderMarkers() {
+        const items = [];
+        for (let i = 0; i < this.state.coordinates.length; i++) {
+            items.push(this.renderMarker(i));
+        }
+        return items;
     }
 
     componentDidMount() {
-        // Step 0:  Setup persistent storage
+        // Initialize feed/swarm
+		nodejs.start("main.js");
+		nodejs.channel.addListener(
+            "message",
+            (msg) => {
+                console.log("From node: " + msg);
+                // store the DAT public key for sharing
+                if(msg.substring(0, 5) == "key: "){ 
+                    shareOptions.message = msg.substring(5);
+                    console.log(shareOptions.url)
+                }
+            },
+            this
+    	);
+        
+				
+		// Setup persistent storage
         Realm.open({
             schema: [locationSchema]
         }).then(realm => {
             this.setState({ realm });
         });
 
-        // Step 1:  Listen to events:
+        // Listen to location events:
         BackgroundGeolocation.onLocation(this.onLocation.bind(this), this.onError);
         BackgroundGeolocation.onMotionChange(this.onMotionChange.bind(this));
         BackgroundGeolocation.onActivityChange(this.onActivityChange.bind(this));
         BackgroundGeolocation.onProviderChange(this.onProviderChange.bind(this));
         BackgroundGeolocation.onPowerSaveChange(this.onPowerSaveChange.bind(this));
 
-        // Step 2:  Execute Ready Method
-        BackgroundGeolocation.ready({
-            // Geolocation Config
+        // Configure Background Geolocation
+        BackgroundGeolocation.configure({
             desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
             distanceFilter: 10,
-            // Activity Recognition
             stopTimeout: 1,
-            // Application config
-            debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
+            debug: false, 
             logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-            stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
-            startOnBoot: true // <-- Auto start tracking when device is powered-up.
+            stopOnTerminate: false,
+            startOnBoot: true 
         }, (state) => {
             console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
-            if (state.enabled) {
-                // Step 3:  Start Tracking
-                BackgroundGeolocation.start(function() {
-                    console.log("- Start success");
-                });
-                BackgroundGeolocation.getCurrentPosition({
-                    persist: true,
-                    samples: 1
-                },
-                (location) => this.props.location = location,
-                (error) => console.log(error))
-            }
+            this.setState({
+                enabled: state.enabled,
+            });
         });
     } 
 
@@ -164,10 +196,9 @@ export default class LocationTracker extends Component < Props > {
         coords.lat = location.coords.latitude;
         coords.lon = location.coords.longitude;
         this.setState({ location: coords });
-        this.addRealm(location)
-        this.addMarker(location);
-        this.setCenter(location);
-        console.log(this.state.realm.objects('Location')[0]['lat'])
+        this.addRealm(location);    // ultimately delete this
+        this.addMarker(location);   // ultimately delete this
+        this.addToDat(location);
     }
     onError(error) {
         console.warn('[location] ERROR -', error);
@@ -184,20 +215,27 @@ export default class LocationTracker extends Component < Props > {
     onPowerSaveChange(isPowerSaveMode:boolean) {
         console.log('[event] powersavechange', isPowerSaveMode);
     } 
-    onClickGetCurrentPosition() {
-        BackgroundGeolocation.getCurrentPosition({
-            persist: true,
-            samples: 1
-        }, (location) => {
-            var coords = { lat: 0, lon: 0 };
-            coords.lat = location.coords.latitude;
-            coords.lon = location.coords.longitude;
-            this.setState({ location: coords });
-            console.log(coords)
-            console.log(this.state.realm)
-        }, (error) => {
-            console.warn('- getCurrentPosition error: ', error);
+
+    onToggleEnabled() {
+        let enabled = !this.state.enabled;
+        this.setState({
+            enabled: enabled,
         });
+        if (enabled) {
+            BackgroundGeolocation.start();
+        } else {
+            BackgroundGeolocation.stop();
+        }
+    }
+
+    onCenterMap () {
+        // need to figure out how to re-center map
+    }
+
+    sharePublicKey = () => {
+        Share.share(shareOptions)
+        .then(result => console.log(result))
+        .catch(error => console.log(error));
     }
 
     // You must remove listeners when your component unmounts
@@ -209,52 +247,36 @@ export default class LocationTracker extends Component < Props > {
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
-                    <Body>
+                    <Left style={{flex:0.25}}>
+                        <Switch onValueChange={() => this.onToggleEnabled()} value={this.state.enabled} />
+                    </Left>
+                    <Body style={{flex:1}}>
                         <Title style={styles.title}>Distributed Sensing</Title>
                     </Body>
+                    <Right style={{flex: 0.25}}>
+                        <Button rounded style={styles.icon}>
+                            <Icon active name="ios-share" style={styles.icon} onPress={ this.sharePublicKey } />
+                        </Button>
+                    </Right>
                 </Header>
 
-                <MapView
-                    ref="map"
-                    style={styles.map}
-                    showsUserLocation={this.state.showsUserLocation}
-                    followsUserLocation={false}
-                    scrollEnabled={true}
-                    showsMyLocationButton={false}
-                    showsPointsOfInterest={false}
-                    showsScale={false}
-                    showsTraffic={false}
-                    toolbarEnabled={false}
-                >
-                    <Polyline
-                        key="polyline"
-                        coordinates={this.state.coordinates}
-                        geodesic={true}
-                        strokeColor='rgba(0,179,253, 0.6)'
-                        strokeWidth={6}
-                        zIndex={0}
-                    />
-                    {this.state.markers.map((marker:any) => (
-                        <Marker
-                            key={marker.key}
-                            coordinate={marker.coordinate}
-                            anchor={{x:0, y:0.1}}
-                            title={marker.title}
-                        >
-                            <View style={[styles.markerIcon]}></View>
-                        </Marker>))
-                    }
-                </MapView>
+                <MapboxGL.MapView
+                    ref={(c) => this._map = c}
+                    style={{flex: 1}}
+                    zoomLevel={15}
+                    showUserLocation={true}
+                    userTrackingMode={1}
+                    >{this.renderMarkers()}
+                </MapboxGL.MapView>
 
                 <Footer style={styles.footer}>
                     <Left style={{flex:0.25}}>
                         <Button rounded style={styles.icon}>
-                            <Icon active name="md-navigate" style={styles.icon} onPress={this.onClickGetCurrentPosition.bind(this)} />
+                            <Icon active name="md-navigate" style={styles.icon} onPress={ this.onCenterMap.bind(this) } />
                         </Button>
                     </Left>
                     <Body style={styles.footerBody}>
                         <Text style={styles.footer}>Saved Pins: {this.state.realm ? this.state.realm.objects('Location').length : 0}</Text>
-                        { /* <Text style={styles.footer}>loc: {this.state.location.lat} {this.state.location.lon}</Text> */ }
                     </Body>
                     <Right style={{flex: 0.25}}>
                         <Button rounded style={styles.icon}>
@@ -273,11 +295,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#272727'
     },
     header: {
-        backgroundColor: '#660d5d'
+        backgroundColor: '#660d5d',
+        height: 75
     },
     title: {
         color: '#f0ead6',
-        fontSize: 24
+        fontSize: 18
     },
     footer: {
         backgroundColor: '#660d5d',

@@ -11,6 +11,7 @@ with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "content.md"))
     content = markdown.markdown(content, extensions=['extra'])
     content = content.replace("SIGNUP", signup)
 
+
 with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "template.html"))) as f:
     template = f.read()
 
