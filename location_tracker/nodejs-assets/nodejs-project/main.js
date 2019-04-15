@@ -38,14 +38,18 @@ rn_bridge.channel.on('message', (msg) => {
         switch(msg.type) {
             case 'init':
                 initialize()
-                rn_bridge.channel.send("Initialized the feed");
+                // rn_bridge.channel.send("Initialized the feed");
+                rn_bridge.channel.post("initialize", JSON.stringify({fake:'obj'}))
                 break;
             case 'add':
                 addFeed(msg);
                 rn_bridge.channel.send("Attempt to add "+ msg.uuid + " to hypercore");
                 break;
             case 'get':
-                const end = feed.length-1;
+                send('get requested');
+                if (feed!=null){
+                    feed.get(0, (err,data) => {send(JSON.stringify(data))})
+                }
                 // send(feed.getBatch(Math.max(end-100+1, 0), end));
                 break;
             default:
@@ -56,6 +60,25 @@ rn_bridge.channel.on('message', (msg) => {
         rn_bridge.channel.send("Error: " + JSON.stringify(err) + " => " + err.stack );
     }
 });
+rn_bridge.channel.on('read', () => {
+    if (feed!=null){
+        let end = feed.length-1;
+        // feed.getBatch(Math.max(end-100+1, 0), end)
+        feed.getBatch(Math.max(end-100+1,0), end, (err,data) => {
+
+            // let retval = []
+            // for (let d in data){
+            //     retval.push([d.coords.longitude,d.coords.latitude])
+            // }
+
+            rn_bridge.channel.post("dataDump", JSON.stringify(data))
+                // send(feed.getBatch(Math.max(end-100+1, 0), end));
+
+        })
+    } else{
+        send("feed is null")
+    }
+})
 
 // Inform react-native node is initialized.
 rn_bridge.channel.send("node was initialized.");

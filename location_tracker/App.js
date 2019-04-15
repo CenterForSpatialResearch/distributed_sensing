@@ -63,7 +63,7 @@ export default class LocationTracker extends Component <Props> {
             shareVisible: false,
             showUserLocation: true,
             following: true,
-            currentTrackingMode: MapboxGL.UserTrackingModes.Follow
+            currentTrackingMode: 1
         };
     }
 
@@ -103,7 +103,7 @@ export default class LocationTracker extends Component <Props> {
             isDatInit = 1;
             obj.type = "init";
         }
-        console.log(JSON.stringify(obj))
+        // console.log(JSON.stringify(obj))
         nodejs.channel.send(obj)
     }
 
@@ -112,6 +112,11 @@ export default class LocationTracker extends Component <Props> {
         let obj = {};
         obj.type = "get";
         nodejs.channel.send(obj);
+    }
+
+    readFromDat(){
+        console.log('reading from dat')
+        nodejs.channel.post("read")
     }
 
     // ultimately delete this
@@ -137,6 +142,17 @@ export default class LocationTracker extends Component <Props> {
             </MapboxGL.PointAnnotation>
         );
     }
+    addNewMarker(coords,ind){
+        const id = `pointAnnotation${ind}`;
+        return (
+            <MapboxGL.PointAnnotation
+                key={id}
+                id={id}
+                title='Test'
+                coordinate={coords}>
+            </MapboxGL.PointAnnotation>
+        );
+    }
 
     renderMarkers() {
         const items = [];
@@ -149,18 +165,48 @@ export default class LocationTracker extends Component <Props> {
     componentDidMount() {
         // Initialize feed/swarm
 		nodejs.start("main.js");
+
+        nodejs.channel.send({type:"init"})
 		nodejs.channel.addListener(
             "message",
             (msg) => {
-                console.log("From node: " + msg);
+                // console.log("From node: " + msg);
                 // store the DAT public key for sharing
                 if(msg.substring(0, 5) == "key: "){ 
                     shareOptions.message = msg.substring(5);
-                    console.log(shareOptions.url)
+                } else if (msg.includes("Initialized")){
+                    isDatInit = 1;
                 }
+                // console.log(JSON.stringify(msg))
             },
             this
     	);
+        nodejs.channel.addListener(
+            "initialize",
+            (msg) => {
+                // console.log("Initialized: " + msg)
+                this.readFromDat();
+            },
+            this
+        );
+        nodejs.channel.addListener(
+            "dataDump",
+            (msg) => {
+                console.log("datadump")
+
+                console.log(JSON.parse(msg))
+                let data = JSON.parse(msg);
+                for (let i = 0; i<data.length; i++){
+                    this.setState({
+                        coordinates: [...this.state.coordinates, 
+                            [ data[i].coords.longitude, data[i].coords.latitude ]
+                        ]
+                    });
+                }
+                console.log(this.state.coordinates)
+            },
+            this
+        );
         
 				
 		// Setup persistent storage
@@ -197,7 +243,7 @@ export default class LocationTracker extends Component <Props> {
     } 
 
     onLocation(location) {
-        console.log('[location] -', location);
+        // console.log('[location] -', location);
         var coords = { lat: 0, lon: 0 };
         coords.lat = location.coords.latitude;
         coords.lon = location.coords.longitude;
@@ -236,8 +282,10 @@ export default class LocationTracker extends Component <Props> {
 
     onCenterMap () {
         // need to figure out how to re-center map
-        console.log('center');
-        this.setState({currentTrackingMode: MapboxGL.UserTrackingModes.Follow});
+        // console.log('center');
+        this.setState({currentTrackingMode: 1});
+        this.state.following = !this.state.following;
+        console.log(this.state)
         
     }
 
@@ -254,14 +302,12 @@ export default class LocationTracker extends Component <Props> {
 
   
       onUserTrackingModeChange(e) {
-        this.state.following = !this.state.following;
-        if (this.state.following){
-            this.setState({currentTrackingMode: MapboxGL.UserTrackingModes.Follow});
-
-        } else{
-            this.setState({currentTrackingMode: MapboxGL.UserTrackingModes.None});
-
+        console.log('tracking mode change')
+        if (e.nativeEvent.payload.userTrackingMode == 0){
+            console.log("turning off tracking")
+            this.setState({currentTrackingMode: 0});
         }
+
 
       }
 
@@ -290,7 +336,7 @@ export default class LocationTracker extends Component <Props> {
                     showUserLocation = {true}
                     userTrackingMode = {this.state.currentTrackingMode}
                     onUserTrackingModeChange = {this.onUserTrackingModeChange}
-                    >{this.renderMarkers()}
+                    >{/*this.renderMarkers()*/this.state.coordinates.map((coord,ind)=> this.addNewMarker(coord,ind) )}
                 </MapboxGL.MapView>
 
                 <Footer style={styles.footer}>
@@ -304,7 +350,7 @@ export default class LocationTracker extends Component <Props> {
                     </Body>
                     <Right style={{flex: 0.25}}>
                         <Button rounded style={styles.icon}>
-                            <Icon active name="trash" style={styles.icon} onPress={ this.clearRealm.bind(this) } />
+                            <Icon active name="trash" style={styles.icon} onPress={ /*this.clearRealm.bind(this)*/ this.getFromDat.bind(this) } />
                         </Button>
                     </Right>
                 </Footer>
