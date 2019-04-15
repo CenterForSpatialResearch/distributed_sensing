@@ -60,7 +60,10 @@ export default class LocationTracker extends Component <Props> {
             location: { lat: 0, lon: 0 },
             realm: null,
             coordinates: [],
-            shareVisible: false
+            shareVisible: false,
+            showUserLocation: true,
+            following: true,
+            currentTrackingMode: MapboxGL.UserTrackingModes.Follow
         };
     }
 
@@ -118,6 +121,7 @@ export default class LocationTracker extends Component <Props> {
                 [ location.coords.longitude, location.coords.latitude ]
             ]
         });
+
     }  
 
     renderMarker(counter) {
@@ -165,6 +169,8 @@ export default class LocationTracker extends Component <Props> {
         }).then(realm => {
             this.setState({ realm });
         });
+
+        this.onUserTrackingModeChange = this.onUserTrackingModeChange.bind(this);
 
         // Listen to location events:
         BackgroundGeolocation.onLocation(this.onLocation.bind(this), this.onError);
@@ -230,6 +236,9 @@ export default class LocationTracker extends Component <Props> {
 
     onCenterMap () {
         // need to figure out how to re-center map
+        console.log('center');
+        this.setState({currentTrackingMode: MapboxGL.UserTrackingModes.Follow});
+        
     }
 
     sharePublicKey = () => {
@@ -242,6 +251,20 @@ export default class LocationTracker extends Component <Props> {
     componentWillUnmount() {
         BackgroundGeolocation.removeListeners();
     }
+
+  
+      onUserTrackingModeChange(e) {
+        this.state.following = !this.state.following;
+        if (this.state.following){
+            this.setState({currentTrackingMode: MapboxGL.UserTrackingModes.Follow});
+
+        } else{
+            this.setState({currentTrackingMode: MapboxGL.UserTrackingModes.None});
+
+        }
+
+      }
+
 
     render() {
         return (
@@ -263,9 +286,10 @@ export default class LocationTracker extends Component <Props> {
                 <MapboxGL.MapView
                     ref={(c) => this._map = c}
                     style={{flex: 1}}
-                    zoomLevel={15}
-                    showUserLocation={true}
-                    userTrackingMode={1}
+                    zoomLevel={15}  
+                    showUserLocation = {true}
+                    userTrackingMode = {this.state.currentTrackingMode}
+                    onUserTrackingModeChange = {this.onUserTrackingModeChange}
                     >{this.renderMarkers()}
                 </MapboxGL.MapView>
 
