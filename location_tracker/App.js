@@ -73,33 +73,14 @@ export default class LocationTracker extends Component <Props> {
     }
 
     readFromDat(){
-        console.log('reading from dat')
         nodejs.channel.post("read")
     }
 
     // ultimately delete this
-    addMarker(location:Location) {
-        this.setState({
-            coordinates: [...this.state.coordinates, 
-                [ location.coords.longitude, location.coords.latitude ]
-            ]
-        });
-
+    addToCoords(location:Location) {
+        this.state.coordinates.push([location.coords.longitude, location.coords.latitude])
     }  
 
-    renderMarker(counter) {
-        const id = `pointAnnotation${counter}`;
-        const coordinate = this.state.coordinates[counter];
-        const title = `Longitude: ${this.state.coordinates[counter][1]} Latitude: ${this.state.coordinates[counter][0]}`;
-        return (
-            <MapboxGL.PointAnnotation
-                key={id}
-                id={id}
-                title='Test'
-                coordinate={coordinate}>
-            </MapboxGL.PointAnnotation>
-        );
-    }
     addNewMarker(coords,ind){
         const id = `pointAnnotation${ind}`;
         return (
@@ -110,14 +91,6 @@ export default class LocationTracker extends Component <Props> {
                 coordinate={coords}>
             </MapboxGL.PointAnnotation>
         );
-    }
-
-    renderMarkers() {
-        const items = [];
-        for (let i = 0; i < this.state.coordinates.length; i++) {
-            items.push(this.renderMarker(i));
-        }
-        return items;
     }
 
     componentDidMount() {
@@ -193,7 +166,7 @@ export default class LocationTracker extends Component <Props> {
         coords.lat = location.coords.latitude;
         coords.lon = location.coords.longitude;
         this.setState({ location: coords });
-        this.addMarker(location);   // ultimately delete this
+        this.addToCoords(location);   // ultimately delete this
         this.addToDat(location);
     }
     onError(error) {
@@ -229,8 +202,6 @@ export default class LocationTracker extends Component <Props> {
         // console.log('center');
         this.setState({currentTrackingMode: 1});
         this.state.following = !this.state.following;
-        console.log(this.state)
-        
     }
 
     sharePublicKey = () => {
@@ -244,15 +215,10 @@ export default class LocationTracker extends Component <Props> {
         BackgroundGeolocation.removeListeners();
     }
 
-  
       onUserTrackingModeChange(e) {
-        console.log('tracking mode change')
         if (e.nativeEvent.payload.userTrackingMode == 0){
-            console.log("turning off tracking")
             this.setState({currentTrackingMode: 0});
         }
-
-
       }
 
 
