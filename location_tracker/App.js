@@ -20,7 +20,7 @@ import { Container,
          Switch 
        } from 'native-base';
 
-import Realm from 'realm';
+// import Realm from 'realm';
 
 import BackgroundGeolocation from "react-native-background-geolocation";
 import { Location,
@@ -58,7 +58,7 @@ export default class LocationTracker extends Component <Props> {
         this.state = {
             enabled: false,
             location: { lat: 0, lon: 0 },
-            realm: null,
+            // realm: null,
             coordinates: [],
             shareVisible: false,
             showUserLocation: true,
@@ -67,52 +67,60 @@ export default class LocationTracker extends Component <Props> {
         };
     }
 
-    addRealm(location) {
-      let realm = this.state.realm;
-        realm.write(()=>{
-          realm.create('Location', {
-            time: location.timestamp,
-            odometer: location.odometer,
-            is_moving: location.is_moving,
-            lat: location.coords.latitude,
-            lon: location.coords.longitude,
-            uuid: location.uuid
-          });
-        });
-    }
+    // addRealm(location) {
+    //   let realm = this.state.realm;
+    //     realm.write(()=>{
+    //       realm.create('Location', {
+    //         time: location.timestamp,
+    //         odometer: location.odometer,
+    //         is_moving: location.is_moving,
+    //         lat: location.coords.latitude,
+    //         lon: location.coords.longitude,
+    //         uuid: location.uuid
+    //       });
+    //     });
+    // }
 
-    clearRealm() {
-        let realm = this.state.realm;
-        console.log(realm.objects('Location')[0]['time'])
-        console.log(realm.objects('Location')[1]['time'])
-        realm.write(() => {
-            realm.deleteAll()
-        });
-        this.setState({
-            coordinates: []
-        });
-        this.forceUpdate();
-    }
+    // clearRealm() {
+    //     let realm = this.state.realm;
+    //     console.log(realm.objects('Location')[0]['time'])
+    //     console.log(realm.objects('Location')[1]['time'])
+    //     realm.write(() => {
+    //         realm.deleteAll()
+    //     });
+    //     this.setState({
+    //         coordinates: []
+    //     });
+    //     this.forceUpdate();
+    // }
 
     addToDat(location){
-        let obj = {};
+        // let obj = {};
+        // if (isDatInit){
+        //     obj = location;
+        //     obj.type = "add";
+        // } else{
+        //     isDatInit = 1;
+        //     obj.type = "init";
+        // }
+
+        // // console.log(JSON.stringify(obj))
+        // nodejs.channel.send(obj)
+        
         if (isDatInit){
-            obj = location;
-            obj.type = "add";
-        } else{
-            isDatInit = 1;
-            obj.type = "init";
-        }
-        // console.log(JSON.stringify(obj))
-        nodejs.channel.send(obj)
+            nodejs.channel.post("add", location);
+        } 
+        // else{
+        //     console.error("DAT is not init.");
+        // }
     }
 
     // this needs work
-    getFromDat(){
-        let obj = {};
-        obj.type = "get";
-        nodejs.channel.send(obj);
-    }
+    // getFromDat(){
+    //     let obj = {};
+    //     obj.type = "get";
+    //     nodejs.channel.send(obj);
+    // }
 
     readFromDat(){
         console.log('reading from dat')
@@ -166,7 +174,9 @@ export default class LocationTracker extends Component <Props> {
         // Initialize feed/swarm
 		nodejs.start("main.js");
 
-        nodejs.channel.send({type:"init"})
+        // nodejs.channel.send({type:"init"})
+        nodejs.channel.post("init");
+
 		nodejs.channel.addListener(
             "message",
             (msg) => {
@@ -182,9 +192,9 @@ export default class LocationTracker extends Component <Props> {
             this
     	);
         nodejs.channel.addListener(
-            "initialize",
-            (msg) => {
-                // console.log("Initialized: " + msg)
+            "is_initd",
+            () => {
+                isDatInit = 1;
                 this.readFromDat();
             },
             this
@@ -192,9 +202,6 @@ export default class LocationTracker extends Component <Props> {
         nodejs.channel.addListener(
             "dataDump",
             (msg) => {
-                console.log("datadump")
-
-                console.log(JSON.parse(msg))
                 let data = JSON.parse(msg);
                 for (let i = 0; i<data.length; i++){
                     this.setState({
@@ -203,18 +210,17 @@ export default class LocationTracker extends Component <Props> {
                         ]
                     });
                 }
-                console.log(this.state.coordinates)
             },
             this
         );
         
 				
 		// Setup persistent storage
-        Realm.open({
-            schema: [locationSchema]
-        }).then(realm => {
-            this.setState({ realm });
-        });
+        // Realm.open({
+        //     schema: [locationSchema]
+        // }).then(realm => {
+        //     this.setState({ realm });
+        // });
 
         this.onUserTrackingModeChange = this.onUserTrackingModeChange.bind(this);
 
@@ -248,7 +254,7 @@ export default class LocationTracker extends Component <Props> {
         coords.lat = location.coords.latitude;
         coords.lon = location.coords.longitude;
         this.setState({ location: coords });
-        this.addRealm(location);    // ultimately delete this
+        // this.addRealm(location);    // ultimately delete this
         this.addMarker(location);   // ultimately delete this
         this.addToDat(location);
     }
@@ -346,11 +352,11 @@ export default class LocationTracker extends Component <Props> {
                         </Button>
                     </Left>
                     <Body style={styles.footerBody}>
-                        <Text style={styles.footer}>Saved Pins: {this.state.realm ? this.state.realm.objects('Location').length : 0}</Text>
+                        <Text style={styles.footer}>Saved Pins: {this.state.coordinates.length}</Text>
                     </Body>
                     <Right style={{flex: 0.25}}>
                         <Button rounded style={styles.icon}>
-                            <Icon active name="trash" style={styles.icon} onPress={ /*this.clearRealm.bind(this)*/ this.getFromDat.bind(this) } />
+                            <Icon active name="trash" style={styles.icon} />
                         </Button>
                     </Right>
                 </Footer>
