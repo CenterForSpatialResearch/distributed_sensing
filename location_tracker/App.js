@@ -20,7 +20,6 @@ import { Container,
          Switch 
        } from 'native-base';
 
-// import Realm from 'realm';
 
 import BackgroundGeolocation from "react-native-background-geolocation";
 import { Location,
@@ -58,7 +57,6 @@ export default class LocationTracker extends Component <Props> {
         this.state = {
             enabled: false,
             location: { lat: 0, lon: 0 },
-            // realm: null,
             coordinates: [],
             shareVisible: false,
             showUserLocation: true,
@@ -67,60 +65,12 @@ export default class LocationTracker extends Component <Props> {
         };
     }
 
-    // addRealm(location) {
-    //   let realm = this.state.realm;
-    //     realm.write(()=>{
-    //       realm.create('Location', {
-    //         time: location.timestamp,
-    //         odometer: location.odometer,
-    //         is_moving: location.is_moving,
-    //         lat: location.coords.latitude,
-    //         lon: location.coords.longitude,
-    //         uuid: location.uuid
-    //       });
-    //     });
-    // }
-
-    // clearRealm() {
-    //     let realm = this.state.realm;
-    //     console.log(realm.objects('Location')[0]['time'])
-    //     console.log(realm.objects('Location')[1]['time'])
-    //     realm.write(() => {
-    //         realm.deleteAll()
-    //     });
-    //     this.setState({
-    //         coordinates: []
-    //     });
-    //     this.forceUpdate();
-    // }
 
     addToDat(location){
-        // let obj = {};
-        // if (isDatInit){
-        //     obj = location;
-        //     obj.type = "add";
-        // } else{
-        //     isDatInit = 1;
-        //     obj.type = "init";
-        // }
-
-        // // console.log(JSON.stringify(obj))
-        // nodejs.channel.send(obj)
-        
         if (isDatInit){
             nodejs.channel.post("add", location);
         } 
-        // else{
-        //     console.error("DAT is not init.");
-        // }
     }
-
-    // this needs work
-    // getFromDat(){
-    //     let obj = {};
-    //     obj.type = "get";
-    //     nodejs.channel.send(obj);
-    // }
 
     readFromDat(){
         console.log('reading from dat')
@@ -180,14 +130,12 @@ export default class LocationTracker extends Component <Props> {
 		nodejs.channel.addListener(
             "message",
             (msg) => {
-                // console.log("From node: " + msg);
                 // store the DAT public key for sharing
                 if(msg.substring(0, 5) == "key: "){ 
                     shareOptions.message = msg.substring(5);
                 } else if (msg.includes("Initialized")){
                     isDatInit = 1;
                 }
-                // console.log(JSON.stringify(msg))
             },
             this
     	);
@@ -213,14 +161,6 @@ export default class LocationTracker extends Component <Props> {
             },
             this
         );
-        
-				
-		// Setup persistent storage
-        // Realm.open({
-        //     schema: [locationSchema]
-        // }).then(realm => {
-        //     this.setState({ realm });
-        // });
 
         this.onUserTrackingModeChange = this.onUserTrackingModeChange.bind(this);
 
@@ -249,12 +189,10 @@ export default class LocationTracker extends Component <Props> {
     } 
 
     onLocation(location) {
-        // console.log('[location] -', location);
         var coords = { lat: 0, lon: 0 };
         coords.lat = location.coords.latitude;
         coords.lon = location.coords.longitude;
         this.setState({ location: coords });
-        // this.addRealm(location);    // ultimately delete this
         this.addMarker(location);   // ultimately delete this
         this.addToDat(location);
     }
