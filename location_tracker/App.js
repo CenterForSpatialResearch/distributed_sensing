@@ -20,7 +20,6 @@ import { Container,
          Switch 
        } from 'native-base';
 
-import Realm from 'realm';
 
 import BackgroundGeolocation from "react-native-background-geolocation";
 import { Location,
@@ -58,113 +57,85 @@ export default class LocationTracker extends Component <Props> {
         this.state = {
             enabled: false,
             location: { lat: 0, lon: 0 },
-            realm: null,
             coordinates: [],
-            shareVisible: false
+            shareVisible: false,
+            showUserLocation: true,
+            following: true,
+            currentTrackingMode: 1
         };
     }
 
-    addRealm(location) {
-      let realm = this.state.realm;
-        realm.write(()=>{
-          realm.create('Location', {
-            time: location.timestamp,
-            odometer: location.odometer,
-            is_moving: location.is_moving,
-            lat: location.coords.latitude,
-            lon: location.coords.longitude,
-            uuid: location.uuid
-          });
-        });
-    }
-
-    clearRealm() {
-        let realm = this.state.realm;
-        console.log(realm.objects('Location')[0]['time'])
-        console.log(realm.objects('Location')[1]['time'])
-        realm.write(() => {
-            realm.deleteAll()
-        });
-        this.setState({
-            coordinates: []
-        });
-        this.forceUpdate();
-    }
 
     addToDat(location){
-        let obj = {};
         if (isDatInit){
-            obj = location;
-            obj.type = "add";
-        } else{
-            isDatInit = 1;
-            obj.type = "init";
-        }
-        console.log(JSON.stringify(obj))
-        nodejs.channel.send(obj)
+            nodejs.channel.post("add", location);
+        } 
     }
 
-    // this needs work
-    getFromDat(){
-        let obj = {};
-        obj.type = "get";
-        nodejs.channel.send(obj);
+    readFromDat(){
+        nodejs.channel.post("read")
     }
 
     // ultimately delete this
-    addMarker(location:Location) {
-        this.setState({
-            coordinates: [...this.state.coordinates, 
-                [ location.coords.longitude, location.coords.latitude ]
-            ]
-        });
+    addToCoords(location:Location) {
+        this.state.coordinates.push([location.coords.longitude, location.coords.latitude])
     }  
 
-    renderMarker(counter) {
-        const id = `pointAnnotation${counter}`;
-        const coordinate = this.state.coordinates[counter];
-        const title = `Longitude: ${this.state.coordinates[counter][1]} Latitude: ${this.state.coordinates[counter][0]}`;
+    addNewMarker(coords,ind){
+        const id = `pointAnnotation${ind}`;
         return (
             <MapboxGL.PointAnnotation
                 key={id}
                 id={id}
                 title='Test'
-                coordinate={coordinate}>
+                coordinate={coords}>
             </MapboxGL.PointAnnotation>
         );
-    }
-
-    renderMarkers() {
-        const items = [];
-        for (let i = 0; i < this.state.coordinates.length; i++) {
-            items.push(this.renderMarker(i));
-        }
-        return items;
     }
 
     componentDidMount() {
         // Initialize feed/swarm
 		nodejs.start("main.js");
+
+        // nodejs.channel.send({type:"init"})
+        nodejs.channel.post("init");
+
 		nodejs.channel.addListener(
             "message",
             (msg) => {
-                console.log("From node: " + msg);
                 // store the DAT public key for sharing
                 if(msg.substring(0, 5) == "key: "){ 
                     shareOptions.message = msg.substring(5);
-                    console.log(shareOptions.url)
+                } else if (msg.includes("Initialized")){
+                    isDatInit = 1;
                 }
             },
             this
     	);
-        
-				
-		// Setup persistent storage
-        Realm.open({
-            schema: [locationSchema]
-        }).then(realm => {
-            this.setState({ realm });
-        });
+        nodejs.channel.addListener(
+            "is_initd",
+            () => {
+                isDatInit = 1;
+                this.readFromDat();
+            },
+            this
+        );
+        nodejs.channel.addListener(
+            "dataDump",
+            (msg) => {
+                let data = JSON.parse(msg);
+                for (let i = 0; i<data.length; i++){
+                    this.setState({
+                        coordinates: [...this.state.coordinates, 
+                            [ data[i].coords.longitude, data[i].coords.latitude ]
+                        ]
+                    });
+                }
+            },
+            this
+        );
+
+        this.onUserTrackingModeChange = this.onUserTrackingModeChange.bind(this);
 
         // Listen to location events:
         BackgroundGeolocation.onLocation(this.onLocation.bind(this), this.onError);
@@ -191,13 +162,11 @@ export default class LocationTracker extends Component <Props> {
     } 
 
     onLocation(location) {
-        console.log('[location] -', location);
         var coords = { lat: 0, lon: 0 };
         coords.lat = location.coords.latitude;
         coords.lon = location.coords.longitude;
         this.setState({ location: coords });
-        this.addRealm(location);    // ultimately delete this
-        this.addMarker(location);   // ultimately delete this
+        this.addToCoords(location);   // ultimately delete this
         this.addToDat(location);
     }
     onError(error) {
@@ -230,6 +199,9 @@ export default class LocationTracker extends Component <Props> {
 
     onCenterMap () {
         // need to figure out how to re-center map
+        // console.log('center');
+        this.setState({currentTrackingMode: 1});
+        this.state.following = !this.state.following;
     }
 
     sharePublicKey = () => {
@@ -242,6 +214,13 @@ export default class LocationTracker extends Component <Props> {
     componentWillUnmount() {
         BackgroundGeolocation.removeListeners();
     }
+
+      onUserTrackingModeChange(e) {
+        if (e.nativeEvent.payload.userTrackingMode == 0){
+            this.setState({currentTrackingMode: 0});
+        }
+      }
+
 
     render() {
         return (
@@ -263,10 +242,11 @@ export default class LocationTracker extends Component <Props> {
                 <MapboxGL.MapView
                     ref={(c) => this._map = c}
                     style={{flex: 1}}
-                    zoomLevel={15}
-                    showUserLocation={true}
-                    userTrackingMode={1}
-                    >{this.renderMarkers()}
+                    zoomLevel={15}  
+                    showUserLocation = {true}
+                    userTrackingMode = {this.state.currentTrackingMode}
+                    onUserTrackingModeChange = {this.onUserTrackingModeChange}
+                    >{/*this.renderMarkers()*/this.state.coordinates.map((coord,ind)=> this.addNewMarker(coord,ind) )}
                 </MapboxGL.MapView>
 
                 <Footer style={styles.footer}>
@@ -276,11 +256,11 @@ export default class LocationTracker extends Component <Props> {
                         </Button>
                     </Left>
                     <Body style={styles.footerBody}>
-                        <Text style={styles.footer}>Saved Pins: {this.state.realm ? this.state.realm.objects('Location').length : 0}</Text>
+                        <Text style={styles.footer}>Saved Pins: {this.state.coordinates.length}</Text>
                     </Body>
                     <Right style={{flex: 0.25}}>
                         <Button rounded style={styles.icon}>
-                            <Icon active name="trash" style={styles.icon} onPress={ this.clearRealm.bind(this) } />
+                            <Icon active name="trash" style={styles.icon} />
                         </Button>
                     </Right>
                 </Footer>
