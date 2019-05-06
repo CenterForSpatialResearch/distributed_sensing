@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'"
   },
   "dependencies": {
     "@mapbox/react-native-mapbox-gl": "^6.1.3",
     "native-base": "^2.12.1",
-    "nodejs-mobile-react-native": "^0.3.4",
+    "nodejs-mobile-react-native": "^0.4.1",
     "react": "^16.8.3",
     "react-native": "^0.59.1",
     "react-native-background-geolocation": "^3.0.0-beta.4",

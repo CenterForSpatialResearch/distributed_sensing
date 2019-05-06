@@ -1,0 +1,25 @@
+
+After setting build configuration to release in the location_tracker scheme, I ran into several errors. Here they are in the order I encountered them and what I did to fixe them. Note: they could probably be combined in a smarter way so you don't have to keep cleaning and re-building from scratch.
+
+Error:Fix
+
+Mapbox Framework Not Found: Make sure you have “$(PROJECT_DIR)/../node_modules/@mapbox/react-native-mapbox-gl/ios” listed as a framework search paths in RELEASE mode. Might need to set to recursive.
+
+library not found for -lRNNodeJsMobile: Set your target iOS to >11.0. I am running 12.2 so I set it to that.
+
+Missing main.jsbundle: Follow Cuong Lam’s answer at https://stackoverflow.com/questions/49505446/main-jsbundle-does-not-exist-this-must-be-a-bug-with-echo-react-native
+
+A bunch of errors (52) about compiling to arm64 when it should be compiled to armv7: There are a lot of suggestions surrounding this one. What I got to work was to
+1. Under build settings > Architectures > Valid Architectures remove arm64 and arm64e (should only be armv7 and armv7s
+2. Set “Build Active Architecture Only” to Yes (a lot of people say to set to No)
+3. In command line in location_tracker directory:
+	$ rm -rf node_modules
+	$ rm -rf ios/build
+	$ npm install
+	$ npm audit fix
+	$ react-native link
+4. Clean build (cmd+shift+K) in Xcode and re-run
+
+Reference to RCTInvalidating is Ambiguous: Make the deletions in RCTInvalidating.h suggested at https://github.com/transistorsoft/react-native-background-geolocation/issues/669
+
+Mapbox error having to do with stripping frameworks: Remove armv7 and add arm64 back to architectures; clean and rebuild 

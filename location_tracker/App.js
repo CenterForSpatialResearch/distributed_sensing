@@ -2,6 +2,8 @@
  * location_tracker
  */
 
+ import JavaScriptCore
+
 import React from 'react';
 import { Component } from 'react';
 
