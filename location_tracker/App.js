@@ -110,7 +110,6 @@ export default class LocationTracker extends Component <Props> {
                             ]
                         });
                     }
-                    Alert.alert("just read from dat")
                 },
                 this
             );
