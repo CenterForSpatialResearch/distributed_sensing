@@ -47,6 +47,7 @@
 		3BF0C9D124C04664893ECC3A /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0E812DC57C054E54A33B658E /* FontAwesome5_Brands.ttf */; };
 		411301B52FE2462ABCE8ACCA /* libCocoaLumberjack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 424C1F716ABA48D19B40A14F /* libCocoaLumberjack.a */; };
 		4ECAC407369444E3B416895D /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F37B3F2451A145CF8D699A59 /* MaterialCommunityIcons.ttf */; };
+		51106FB322807776001D139D /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
 		552227A0DA6F48138A789EA0 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B245C4029DAC4258B07C0E9B /* Octicons.ttf */; };
 		6538C7D22C124B759CBEBF1F /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41128C3E33A749D1B0EA6150 /* FontAwesome5_Regular.ttf */; };
 		6FCCF85B90C54F2BA30B66D2 /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BD569881E949458EB7FAC98A /* Roboto.ttf */; };
@@ -54,7 +55,6 @@
 		7706BCC5227D4932891BBD3E /* nodejs-project in Resources */ = {isa = PBXBuildFile; fileRef = 57EF4AC1A29349C19C934404 /* nodejs-project */; };
 		7CCFDB7DB12A43BEA913B288 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 24C534BFB0614F3F9E0F4A46 /* Roboto_medium.ttf */; };
 		7CE55372D7C144DB8D3A0A43 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B61E3F56A4774EF7BD11B00B /* libc++.tbd */; };
-		826FFEF5227FC7900021751F /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
 		8279510B225D255C009C74AB /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8279510A225D255C009C74AB /* Mapbox.framework */; };
 		8279510C225D255C009C74AB /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8279510A225D255C009C74AB /* Mapbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
@@ -993,11 +993,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = PSZ8FBYSB5;
+						DevelopmentTeam = YP783RD65J;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = PSZ8FBYSB5;
+						DevelopmentTeam = YP783RD65J;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1007,10 +1007,12 @@
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = YP783RD65J;
 						ProvisioningStyle = Automatic;
 					};
 					2D02E48F1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = YP783RD65J;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
@@ -1450,7 +1452,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				826FFEF5227FC7900021751F /* main.jsbundle in Resources */,
+				51106FB322807776001D139D /* main.jsbundle in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				8799AF0F859849A485CCDE92 /* AntDesign.ttf in Resources */,
@@ -1506,7 +1508,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1647,7 +1649,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = PSZ8FBYSB5;
+				DEVELOPMENT_TEAM = YP783RD65J;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-geolocation/ios/**",
@@ -1702,7 +1704,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = PSZ8FBYSB5;
+				DEVELOPMENT_TEAM = YP783RD65J;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-geolocation/ios/**",
@@ -1756,8 +1758,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = PSZ8FBYSB5;
+				DEVELOPMENT_TEAM = YP783RD65J;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"$(PROJECT_DIR)/../nodejs-assets/nodejs-project/hyperdiscovery/node_modules/sodium-native/prebuilds/darwin-x64/libsodium.dylib",
+					libsodium.dylib,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-geolocation/ios/**",
 					"$(PROJECT_DIR)/../node_modules/react-native-background-fetch/ios/**",
@@ -1785,7 +1791,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.location-tracker";
 				PRODUCT_NAME = location_tracker;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VALID_ARCHS = "armv7 arm64";
@@ -1800,8 +1806,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PSZ8FBYSB5;
+				DEVELOPMENT_TEAM = YP783RD65J;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"$(PROJECT_DIR)/../nodejs-assets/nodejs-project/hyperdiscovery/node_modules/sodium-native/prebuilds/darwin-x64/libsodium.dylib",
+					libsodium.dylib,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-geolocation/ios/**",
 					"$(PROJECT_DIR)/../node_modules/react-native-background-fetch/ios/**",
@@ -1829,7 +1839,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.location-tracker";
 				PRODUCT_NAME = location_tracker;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VALID_ARCHS = "armv7 arm64";
@@ -1847,6 +1857,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = YP783RD65J;
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1905,6 +1916,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = YP783RD65J;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-geolocation/ios/**",
@@ -1960,6 +1972,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = YP783RD65J;
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2016,6 +2029,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = YP783RD65J;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-geolocation/ios/**",

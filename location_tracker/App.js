@@ -2,14 +2,15 @@
  * location_tracker
  */
 
- import JavaScriptCore
+//import JavaScriptCore;
 
 import React from 'react';
 import { Component } from 'react';
 
 import { StyleSheet, 
          View,
-         Share
+         Share,
+         Alert
        } from 'react-native';
 
 import { Container,
@@ -101,6 +102,22 @@ export default class LocationTracker extends Component <Props> {
 
         // nodejs.channel.send({type:"init"})
         nodejs.channel.post("init");
+        nodejs.channel.addListener(
+            "dataDump",
+            (msg) => {
+                let data = JSON.parse(msg);
+                for (let i = 0; i<data.length; i++){
+                    this.setState({
+                        coordinates: [...this.state.coordinates, 
+                            [ data[i].coords.longitude, data[i].coords.latitude ]
+                        ]
+                    });
+                }
+                Alert.alert("just read from dat")
+            },
+            this
+        );
+
 
 		nodejs.channel.addListener(
             "message",
@@ -114,28 +131,18 @@ export default class LocationTracker extends Component <Props> {
             },
             this
     	);
+
         nodejs.channel.addListener(
             "is_initd",
             () => {
+                Alert.alert("dat initialized")
                 isDatInit = 1;
-                this.readFromDat();
+                // this.readFromDat();
+                nodejs.channel.post("read")
             },
             this
         );
-        nodejs.channel.addListener(
-            "dataDump",
-            (msg) => {
-                let data = JSON.parse(msg);
-                for (let i = 0; i<data.length; i++){
-                    this.setState({
-                        coordinates: [...this.state.coordinates, 
-                            [ data[i].coords.longitude, data[i].coords.latitude ]
-                        ]
-                    });
-                }
-            },
-            this
-        );
+
 
         this.onUserTrackingModeChange = this.onUserTrackingModeChange.bind(this);
 
