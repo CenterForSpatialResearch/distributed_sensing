@@ -96,52 +96,63 @@ export default class LocationTracker extends Component <Props> {
         );
     }
 
+    installedListeners(){
+        return new Promise((resolve, reject) =>{
+
+            nodejs.channel.addListener(
+                "dataDump",
+                (msg) => {
+                    let data = JSON.parse(msg);
+                    for (let i = 0; i<data.length; i++){
+                        this.setState({
+                            coordinates: [...this.state.coordinates, 
+                                [ data[i].coords.longitude, data[i].coords.latitude ]
+                            ]
+                        });
+                    }
+                    Alert.alert("just read from dat")
+                },
+                this
+            );
+
+
+            nodejs.channel.addListener(
+                "message",
+                (msg) => {
+                    // store the DAT public key for sharing
+                    if(msg.substring(0, 5) == "key: "){ 
+                        shareOptions.message = msg.substring(5);
+                    } else if (msg.includes("Initialized")){
+                        isDatInit = 1;
+                    }
+                },
+                this
+            );
+
+            nodejs.channel.addListener(
+                "is_initd",
+                () => {
+                    isDatInit = 1;
+                    // this.readFromDat();
+                    nodejs.channel.post("read")
+                },
+                this
+            );
+            resolve(1)
+
+        })
+    }
+
+
     componentDidMount() {
         // Initialize feed/swarm
-		nodejs.start("main.js");
+        nodejs.start("main.js");
 
-        // nodejs.channel.send({type:"init"})
-        nodejs.channel.post("init");
-        nodejs.channel.addListener(
-            "dataDump",
-            (msg) => {
-                let data = JSON.parse(msg);
-                for (let i = 0; i<data.length; i++){
-                    this.setState({
-                        coordinates: [...this.state.coordinates, 
-                            [ data[i].coords.longitude, data[i].coords.latitude ]
-                        ]
-                    });
-                }
-                Alert.alert("just read from dat")
-            },
-            this
-        );
+        this.installedListeners().then((v)=>{
+            nodejs.channel.post("init");
+        })
 
-
-		nodejs.channel.addListener(
-            "message",
-            (msg) => {
-                // store the DAT public key for sharing
-                if(msg.substring(0, 5) == "key: "){ 
-                    shareOptions.message = msg.substring(5);
-                } else if (msg.includes("Initialized")){
-                    isDatInit = 1;
-                }
-            },
-            this
-    	);
-
-        nodejs.channel.addListener(
-            "is_initd",
-            () => {
-                Alert.alert("dat initialized")
-                isDatInit = 1;
-                // this.readFromDat();
-                nodejs.channel.post("read")
-            },
-            this
-        );
+        
 
 
         this.onUserTrackingModeChange = this.onUserTrackingModeChange.bind(this);
