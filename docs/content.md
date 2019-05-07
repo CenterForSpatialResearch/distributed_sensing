@@ -1,10 +1,15 @@
 # HyFA.net
 
+![Mycorrizal Networks](networks.jpg)
+
 **Hy**percore **F**eed **A**ggregator Network is a peer-to-peer system for securely sharing data from sensors. Stream geolocation data from your mobile phone to your laptop, for example, or get updates from a network of water quality monitors, all without setting up a server.
 
 HyFA uses [hypercore](https://github.com/mafintosh/hypercore), the logging system that powers [DAT](https://datproject.org), but it does not use DAT's more advanced file-management features. Instead, it deploys hypercore directly as an unalterable live feed of sensor readings.
 
 SIGNUP
+
+<!-- ![System diagram](diagram.png) -->
+
 
 ---
 
