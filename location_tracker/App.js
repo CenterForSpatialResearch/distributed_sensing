@@ -96,9 +96,9 @@ export default class LocationTracker extends Component <Props> {
         );
     }
 
-    installedListeners(){
+   addDDump(){
         return new Promise((resolve, reject) =>{
-
+        	var l = 0
             nodejs.channel.addListener(
                 "dataDump",
                 (msg) => {
@@ -110,11 +110,15 @@ export default class LocationTracker extends Component <Props> {
                             ]
                         });
                     }
+                    
                 },
                 this
-            );
-
-
+            );   
+            resolve() 
+    })
+}
+  addMsg(){
+        return new Promise((resolve, reject) =>{
             nodejs.channel.addListener(
                 "message",
                 (msg) => {
@@ -127,33 +131,40 @@ export default class LocationTracker extends Component <Props> {
                 },
                 this
             );
+            resolve()
 
+    })
+}
+    // installedListeners(){
+    addInitd(){
+        return new Promise((resolve, reject) =>{
             nodejs.channel.addListener(
                 "is_initd",
                 () => {
                     isDatInit = 1;
-                    // this.readFromDat();
                     nodejs.channel.post("read")
                 },
                 this
             );
-            resolve(1)
+            resolve()
 
         })
     }
+
 
 
     componentDidMount() {
         // Initialize feed/swarm
         nodejs.start("main.js");
 
-        this.installedListeners().then((v)=>{
+        let p1 = this.addMsg();
+        let p2 = this.addDDump();
+        let p3 = this.addInitd();
+        Promise.all([p1, p2, p3]).then(results => {
             nodejs.channel.post("init");
-        })
 
-        
-
-
+  		})
+     
         this.onUserTrackingModeChange = this.onUserTrackingModeChange.bind(this);
 
         // Listen to location events:
