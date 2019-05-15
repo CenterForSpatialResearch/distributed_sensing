@@ -2,15 +2,14 @@
  * location_tracker
  */
 
-//import JavaScriptCore;
-
 import React from 'react';
 import { Component } from 'react';
 
 import { StyleSheet, 
          View,
          Share,
-         Alert
+         Alert,
+         Image
        } from 'react-native';
 
 import { Container,
@@ -92,6 +91,15 @@ export default class LocationTracker extends Component <Props> {
                 id={id}
                 title='Test'
                 coordinate={coords}>
+                <Image
+			        source={require('./marker.png')}
+			        style={{
+						flex: 1,
+						resizeMode: 'contain',
+						width: 50,
+						height: 50
+					}}
+				/>
             </MapboxGL.PointAnnotation>
         );
     }
@@ -263,9 +271,6 @@ export default class LocationTracker extends Component <Props> {
                         <Title style={styles.title}>Distributed Sensing</Title>
                     </Body>
                     <Right style={{flex: 0.25}}>
-                        <Button rounded style={styles.icon}>
-                            <Icon active name="ios-share" style={styles.icon} onPress={ this.sharePublicKey } />
-                        </Button>
                     </Right>
                 </Header>
 
@@ -286,11 +291,10 @@ export default class LocationTracker extends Component <Props> {
                         </Button>
                     </Left>
                     <Body style={styles.footerBody}>
-                        <Text style={styles.footer}>Saved Pins: {this.state.coordinates.length}</Text>
                     </Body>
                     <Right style={{flex: 0.25}}>
                         <Button rounded style={styles.icon}>
-                            <Icon active name="trash" style={styles.icon} />
+                            <Icon active name="ios-share" style={styles.icon} onPress={ this.sharePublicKey } />
                         </Button>
                     </Right>
                 </Footer>
