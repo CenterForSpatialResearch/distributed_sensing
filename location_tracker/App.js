@@ -23,6 +23,8 @@ import { Container,
        } from 'native-base';
 
 
+import RNSplashScreen from 'react-native-splash-screen';
+
 import BackgroundGeolocation from "react-native-background-geolocation";
 import { Location,
          MotionChangeEvent,
@@ -80,7 +82,7 @@ export default class LocationTracker extends Component <Props> {
 
     // ultimately delete this
     addToCoords(location:Location) {
-        this.state.coordinates.push([location.coords.longitude, location.coords.latitude])
+        this.state.coordinates.push([location.coords.longitude, location.coords.latitude]);
     }  
 
     addNewMarker(coords,ind){
@@ -162,6 +164,8 @@ export default class LocationTracker extends Component <Props> {
 
 
     componentDidMount() {
+    	RNSplashScreen.hide()
+
         // Initialize feed/swarm
         nodejs.start("main.js");
 
@@ -183,7 +187,7 @@ export default class LocationTracker extends Component <Props> {
         BackgroundGeolocation.onPowerSaveChange(this.onPowerSaveChange.bind(this));
 
         // Configure Background Geolocation
-        BackgroundGeolocation.configure({
+        BackgroundGeolocation.ready({
             desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
             distanceFilter: 10,
             stopTimeout: 1,
@@ -281,7 +285,8 @@ export default class LocationTracker extends Component <Props> {
                     showUserLocation = {true}
                     userTrackingMode = {this.state.currentTrackingMode}
                     onUserTrackingModeChange = {this.onUserTrackingModeChange}
-                    >{/*this.renderMarkers()*/this.state.coordinates.map((coord,ind)=> this.addNewMarker(coord,ind) )}
+                    >
+                    {this.state.coordinates.map((coord,ind) => this.addNewMarker(coord,ind) )}
                 </MapboxGL.MapView>
 
                 <Footer style={styles.footer}>
