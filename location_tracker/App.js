@@ -23,8 +23,6 @@ import { Container,
        } from 'native-base';
 
 
-import RNSplashScreen from 'react-native-splash-screen';
-
 import BackgroundGeolocation from "react-native-background-geolocation";
 import { Location,
          MotionChangeEvent,
@@ -164,8 +162,6 @@ export default class LocationTracker extends Component <Props> {
 
 
     componentDidMount() {
-    	RNSplashScreen.hide()
-
         // Initialize feed/swarm
         nodejs.start("main.js");
 
