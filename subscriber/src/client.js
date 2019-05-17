@@ -101,8 +101,11 @@ const fetchData = (key, callback) => {
     $.post('/fetch', {key: key}, (data) => {
         $.getJSON(`/data/${key}`, (data) => {
             let points = []
-            for (const datum of data) {
+            for (let datum of data) {
                 if (typeof datum === 'object') {
+                    if ('coords' in datum) {
+                        datum = datum['coords']
+                    }                    
                     if (    ('latitude' in datum || 'lat' in datum || 'Latitude' in datum) && ('longitude' in datum || 'lon' in datum || 'lng' in datum || 'Longitude' in datum)  ) {
                         points.push(datum)
                     }
