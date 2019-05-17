@@ -128,7 +128,7 @@ main.post('/fetch', (request, response) => {
     console.log(`/fetch`)
     let key = request.body.key
     sensing.fetch(key, () => {
-        response.send('OK')
+        response.send('OK')         // needs to trigger a pinwheel that's stopped by some other callback later
     })
 })
 

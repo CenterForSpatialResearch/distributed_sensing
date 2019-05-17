@@ -29,9 +29,10 @@ const fetch = (key, callback) => {
     let swarm
 
     feed.on('ready', () => {
+        console.log('--> ready')
         swarm = hyperdiscovery(feed)
         let downloading = false
-        swarm.on('connection', async (connection, peer) => {
+        swarm.on('connection', async (connection, peer) => {            // what to do if doesn't connect?
             console.log('--> connected')
             connection.on('close', () => {
                 console.log('--> disconnected')
@@ -58,7 +59,7 @@ const fetch = (key, callback) => {
                         })
                     })                  
                 } else {
-                    console.log('--> something went wrong')
+                    console.log('--> not readable or 0 length')
                     feed.close((e) => {
                         if (e) {
                             return console.log(e)
