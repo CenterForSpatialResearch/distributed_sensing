@@ -21,10 +21,13 @@ const initialize = () => {
                     send('peer disconnected')
                 })
             })
-        })
-        if (feed!=null){
             resolve()
-        } else{
+        })
+        // if (feed!=null){
+        // } else{
+        //     reject()
+        // }
+        if (feed==null){
             reject()
         }
     })

@@ -2,15 +2,14 @@
  * location_tracker
  */
 
-//import JavaScriptCore;
-
 import React from 'react';
 import { Component } from 'react';
 
 import { StyleSheet, 
          View,
          Share,
-         Alert
+         Alert,
+         Image
        } from 'react-native';
 
 import { Container,
@@ -92,13 +91,22 @@ export default class LocationTracker extends Component <Props> {
                 id={id}
                 title='Test'
                 coordinate={coords}>
+                <Image
+			        source={require('./marker.png')}
+			        style={{
+						flex: 1,
+						resizeMode: 'contain',
+						width: 50,
+						height: 50
+					}}
+				/>
             </MapboxGL.PointAnnotation>
         );
     }
 
-    installedListeners(){
+   addDDump(){
         return new Promise((resolve, reject) =>{
-
+        	var l = 0
             nodejs.channel.addListener(
                 "dataDump",
                 (msg) => {
@@ -110,11 +118,15 @@ export default class LocationTracker extends Component <Props> {
                             ]
                         });
                     }
+                    
                 },
                 this
-            );
-
-
+            );   
+            resolve() 
+    })
+}
+  addMsg(){
+        return new Promise((resolve, reject) =>{
             nodejs.channel.addListener(
                 "message",
                 (msg) => {
@@ -127,33 +139,40 @@ export default class LocationTracker extends Component <Props> {
                 },
                 this
             );
+            resolve()
 
+    })
+}
+    // installedListeners(){
+    addInitd(){
+        return new Promise((resolve, reject) =>{
             nodejs.channel.addListener(
                 "is_initd",
                 () => {
                     isDatInit = 1;
-                    // this.readFromDat();
                     nodejs.channel.post("read")
                 },
                 this
             );
-            resolve(1)
+            resolve()
 
         })
     }
+
 
 
     componentDidMount() {
         // Initialize feed/swarm
         nodejs.start("main.js");
 
-        this.installedListeners().then((v)=>{
+        let p1 = this.addMsg();
+        let p2 = this.addDDump();
+        let p3 = this.addInitd();
+        Promise.all([p1, p2, p3]).then(results => {
             nodejs.channel.post("init");
-        })
 
-        
-
-
+  		})
+     
         this.onUserTrackingModeChange = this.onUserTrackingModeChange.bind(this);
 
         // Listen to location events:
@@ -252,9 +271,6 @@ export default class LocationTracker extends Component <Props> {
                         <Title style={styles.title}>Distributed Sensing</Title>
                     </Body>
                     <Right style={{flex: 0.25}}>
-                        <Button rounded style={styles.icon}>
-                            <Icon active name="ios-share" style={styles.icon} onPress={ this.sharePublicKey } />
-                        </Button>
                     </Right>
                 </Header>
 
@@ -275,11 +291,10 @@ export default class LocationTracker extends Component <Props> {
                         </Button>
                     </Left>
                     <Body style={styles.footerBody}>
-                        <Text style={styles.footer}>Saved Pins: {this.state.coordinates.length}</Text>
                     </Body>
                     <Right style={{flex: 0.25}}>
                         <Button rounded style={styles.icon}>
-                            <Icon active name="trash" style={styles.icon} />
+                            <Icon active name="ios-share" style={styles.icon} onPress={ this.sharePublicKey } />
                         </Button>
                     </Right>
                 </Footer>
